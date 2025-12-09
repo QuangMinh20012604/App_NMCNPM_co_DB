@@ -1,0 +1,32 @@
+{
+  "name": "app-english",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "DA NMCNPM có DB",
+  "dependencies": {
+    "axios": "^1.12.2",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.0.1",
+    "pg": "^8.16.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/QuangMinh20012604/App_NMCNPM_co_DB.git"
+  },
+  "bugs": {
+    "url": "https://github.com/QuangMinh20012604/App_NMCNPM_co_DB/issues"
+  },
+  "homepage": "https://github.com/QuangMinh20012604/App_NMCNPM_co_DB#readme"
+}
