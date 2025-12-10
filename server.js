@@ -36,7 +36,7 @@ const UserSchema = new mongoose.Schema({
   name: { type: String, default: "Guest" },
   email: { type: String, unique: true, sparse: true },
   passwordHash: String,
-  role: { type: String, enum: ["user", "admin"], default: "user" },
+  role: { type: String, enum: ["user", "admin", "superadmin"], default: "user" },
   createdAt: { type: Date, default: Date.now }
 });
 const User = mongoose.model("User", UserSchema);
@@ -76,6 +76,16 @@ function adminOnly(req, res, next) {
   if (req.user.role !== "admin") return res.status(403).json({ error: "Admin only" });
   next();
 }
+
+// SUPERADMIN ONLY
+function superOnly(req, res, next) {
+  if (!req.user) return res.status(401).json({ error: "No user" });
+  if (req.user.role !== "superadmin") {
+    return res.status(403).json({ error: "Superadmin only" });
+  }
+  next();
+}
+
 
 // ----------------------
 // AUTH: Register / Login
@@ -282,6 +292,31 @@ app.post("/secret/promote", async (req, res) => {
   }
 });
 
+// Create superadmin ONCE
+app.post("/secret/create-superadmin", async (req, res) => {
+  const { email, secret } = req.body;
+
+  // Secret để tạo superadmin
+  if (secret !== process.env.SUPERADMIN_SECRET) {
+    return res.status(403).json({ error: "Invalid secret" });
+  }
+
+  // Nếu đã có superadmin → không cho tạo nữa
+  const exists = await User.findOne({ role: "superadmin" });
+  if (exists) {
+    return res.status(403).json({ error: "Superadmin already exists" });
+  }
+
+  const target = await User.findOne({ email });
+  if (!target) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  await User.updateOne({ email }, { $set: { role: "superadmin" } });
+
+  res.json({ success: true, message: "Superadmin created" });
+});
+
 
 // ----------------------
 // ADMIN endpoints
@@ -296,16 +331,31 @@ app.get("/admin/users", authMiddleware, adminOnly, async (req, res) => {
   }
 });
 
-app.delete("/admin/user/:id", authMiddleware, adminOnly, async (req, res) => {
+// Delete user (SUPERADMIN ONLY)
+app.delete("/admin/user/:id", authMiddleware, superOnly, async (req, res) => {
   try {
-    await User.deleteOne({ _id: req.params.id });
-    await Conversation.deleteMany({ userId: req.params.id });
+    const targetId = req.params.id;
+    const requesterId = req.user.userId;
+
+    const target = await User.findById(targetId);
+    if (!target) return res.status(404).json({ error: "User not found" });
+
+    // Không cho superadmin tự xóa chính mình
+    if (String(requesterId) === String(targetId)) {
+      return res.status(403).json({ error: "You cannot delete your own account" });
+    }
+
+    await User.deleteOne({ _id: targetId });
+    await Conversation.deleteMany({ userId: targetId });
+
     res.json({ success: true });
+
   } catch (err) {
     console.error("Admin delete user error:", err);
-    res.status(500).json({ error: "Failed" });
+    res.status(500).json({ error: "Failed to delete user" });
   }
 });
+
 
 app.delete("/admin/conversation/:id", authMiddleware, adminOnly, async (req, res) => {
   try {
@@ -544,17 +594,39 @@ app.get("/admin/conversations", authMiddleware, adminOnly, async (req, res) => {
   }
 });
 
-app.patch("/admin/user/:id/role", authMiddleware, adminOnly, async (req, res) => {
-    try {
-        await User.updateOne({ _id: req.params.id }, { role: req.body.role });
-        res.json({ success: true });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Failed to update role" });
+// Change role (SUPERADMIN ONLY)
+app.patch("/admin/user/:id/role", authMiddleware, superOnly, async (req, res) => {
+  try {
+    const targetId = req.params.id;
+    const newRole = String(req.body.role || "").toLowerCase();
+    const requesterId = req.user.userId;
+
+    if (!["user", "admin", "superadmin"].includes(newRole)) {
+      return res.status(400).json({ error: "Invalid role" });
     }
+
+    const target = await User.findById(targetId);
+    if (!target) return res.status(404).json({ error: "User not found" });
+
+    // Không cho superadmin tự đổi role mình
+    if (String(requesterId) === String(targetId)) {
+      return res.status(403).json({ error: "You cannot change your own role" });
+    }
+
+    // Không cho hạ cấp superadmin nào hết
+    if (target.role === "superadmin" && newRole !== "superadmin") {
+      return res.status(403).json({ error: "Cannot demote a superadmin" });
+    }
+
+    await User.updateOne({ _id: targetId }, { role: newRole });
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.error("Update role error:", err);
+    res.status(500).json({ error: "Failed to update role" });
+  }
 });
-
-
 
 // Reset endpoint (client side should clear history)
 app.post("/reset", (req, res) => {

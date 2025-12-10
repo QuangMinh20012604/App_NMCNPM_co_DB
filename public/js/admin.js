@@ -61,7 +61,7 @@ async function loadUsers() {
 
         div.innerHTML = `
             <div class="user-row-top">
-                <b>${user.email}</b> — (${user.role})
+                <b>${user.email}</b> — ${renderRoleBadge(user.role)}
             </div>
 
             <div class="user-actions">
@@ -205,6 +205,16 @@ async function openConversation(convId) {
     });
 
     document.getElementById("adminConvModal").style.display = "flex";
+}
+
+function renderRoleBadge(role) {
+    if (role === "superadmin") {
+        return `<span class="role-badge role-superadmin"><i class="bi bi-star-fill"></i> SUPERADMIN</span>`;
+    }
+    if (role === "admin") {
+        return `<span class="role-badge role-admin"><i class="bi bi-shield-lock"></i> ADMIN</span>`;
+    }
+    return `<span class="role-badge role-user"><i class="bi bi-person"></i> USER</span>`;
 }
 
 

@@ -848,6 +848,30 @@ body:has(#adminContent) .container {
 
 /*                                                           Admin web                                                                                          */
 
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  gap: 6px;
+}
+
+.role-user {
+  background: #888;
+}
+
+.role-admin {
+  background: #1769ff;
+}
+
+.role-superadmin {
+  background: linear-gradient(135deg, #6a00ff, #c400ff);
+}
+
+
 /* ===== ADMIN POPUP ===== */
 .admin-popup {
     background: white;
