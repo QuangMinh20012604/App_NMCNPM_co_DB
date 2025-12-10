@@ -1,6 +1,27 @@
 console.log("main.js starting...");
 
+
+
+
 (function () {
+    document.addEventListener("DOMContentLoaded", () => {
+        initMenuToggle();
+    });
+    
+    function initMenuToggle() {
+        const el = document.getElementById("menuToggle");
+        const slide = document.getElementById("slideSidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        if (!el || !slide || !overlay) return;
+
+        el.onclick = () => {
+            slide.classList.add("open");
+            overlay.style.display = "block";
+            setTimeout(() => overlay.style.opacity = "0.35", 10);
+        };
+    }
+
     function renderRoleBadge(role) {
         if (role === "superadmin") {
             return `<span class="role-badge role-superadmin"><i class="bi bi-star-fill"></i> SUPERADMIN</span>`;
