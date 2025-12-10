@@ -62,7 +62,7 @@ async function loadUsers() {
         // ==========================
         const currentRole = profile.role;   // role của người đang đăng nhập
         const targetRole = user.role;       // role của user đang hiển thị
-        const isSelf = profile.id === user._id;
+        const isSelf = profile._id === user._id;
 
         // ==================================================
         // 1) ROLE BUTTON (Set: Admin/User) — ALWAYS SHOWN BUT DISABLED WHEN NO PERMISSION
