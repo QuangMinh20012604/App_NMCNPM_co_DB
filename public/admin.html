@@ -104,7 +104,11 @@
 
     <!-- SIDEBAR LOGIC -->
     <script>
-        const menuToggle = document.getElementById('adminMenuToggle');
+        (function () {
+            const adminMenuToggle = document.getElementById('adminMenuToggle');
+            adminMenuToggle.onclick = openSidebar;
+        })();
+
         const slideSidebar = document.getElementById('slideSidebar');
         const sidebarOverlay = document.getElementById('adminSidebarOverlay');
         const closeSidebar = document.getElementById('adminCloseSidebar');
