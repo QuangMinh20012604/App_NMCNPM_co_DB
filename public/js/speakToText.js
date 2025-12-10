@@ -2,11 +2,11 @@ let recognition =
   window.webkitSpeechRecognition ? new webkitSpeechRecognition() : null;
 
 let isListening = false;
-let silenceTimer = null;  // ⭐ TIMER để auto stop khi im lặng
+let silenceTimer = null;
+let manualStop = false;  // ⭐ Dùng để phân biệt stop thủ công
 
 if (recognition) {
   recognition.lang = "en-US";
-
   recognition.interimResults = true;
 
   recognition.onstart = () => {
@@ -15,7 +15,7 @@ if (recognition) {
     setStatus("listening");
     document.getElementById("micIcon").className = "bi bi-mic-fill";
 
-    //  Khi bắt đầu nói → set timer im lặng
+    manualStop = false;  // Khi start thì reset lại
     resetSilenceTimer();
   };
 
@@ -27,8 +27,7 @@ if (recognition) {
 
     clearTimeout(silenceTimer);
 
-    //  Nếu bật Auto Mode → tự bật lại sau khi end
-    if (autoMode && autoMode.checked) {
+    if (!manualStop && autoMode && autoMode.checked) {
       recognition.start();
     }
   };
@@ -36,7 +35,6 @@ if (recognition) {
   recognition.onresult = (e) => {
     textInput.value = e.results[0][0].transcript;
 
-    //  Mỗi lần nghe được tiếng → reset lại timer im lặng
     resetSilenceTimer();
 
     if (autoMode && autoMode.checked) {
@@ -44,21 +42,22 @@ if (recognition) {
     }
   };
 
-
-  // ⭐ TIMER IM LẶNG 2 GIÂY
+  // ⭐ TIMER IM LẶNG 
   function resetSilenceTimer() {
     clearTimeout(silenceTimer);
     silenceTimer = setTimeout(() => {
-      console.log(" Auto stop after 2s silence");
+      manualStop = false; // stop do im lặng → cho phép auto start lại
       recognition.stop();
-    }, 2000);
+    }, 5000); // ← timeout tùy chỉnh
   }
 
   // ⭐ BUTTON START / STOP
   speakBtn.onclick = () => {
     if (!isListening) {
+      manualStop = false; // start bình thường
       recognition.start();
     } else {
+      manualStop = true;  // user tự stop → KHÔNG auto start lại
       clearTimeout(silenceTimer);
       recognition.stop();
     }
