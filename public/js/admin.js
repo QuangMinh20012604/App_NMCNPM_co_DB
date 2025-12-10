@@ -28,7 +28,7 @@ document.getElementById("sbProfileEmail").textContent = profile.email || "No ema
 
 
 // ===============================
-// LOAD ALL USERS (FINAL VERSION)
+// LOAD ALL USERS
 // ===============================
 async function loadUsers() {
     const token = getToken();
@@ -36,7 +36,10 @@ async function loadUsers() {
     container.classList.add("users-scroll-mode");
     container.classList.remove("all-conv-mode");
 
+
     container.innerHTML = "<p>Loading users...</p>";
+
+    container.classList.remove("all-conv-mode");
 
     const res = await fetch("/admin/users", {
         headers: { "Authorization": "Bearer " + token }
@@ -57,111 +60,83 @@ async function loadUsers() {
             border:1px solid #eee;
         `;
 
-        // ==========================
-        // ROLE CHECKING
-        // ==========================
-        const currentRole = profile.role;   // role của người đang đăng nhập
-        const targetRole = user.role;       // role của user đang hiển thị
-        const isSelf = profile._id === user._id;
+        // Role của người đang đăng nhập
+        const currentRole = profile.role;
+        const targetRole = user.role;
+        const isSelf = profile.id === user._id;
 
-        // ==================================================
-        // 1) ROLE BUTTON (Set: Admin/User) — ALWAYS SHOWN BUT DISABLED WHEN NO PERMISSION
-        // ==================================================
-        let roleDisabled = false;
+        // =========================
+        // ROLE CHANGE PERMISSION
+        // =========================
+        let canChangeRole = true;
 
         if (currentRole === "admin") {
-            // admin không được đổi role ai
-            roleDisabled = true;
-        } 
-        else if (currentRole === "superadmin") {
-            // superadmin không đổi role superadmin khác
-            if (targetRole === "superadmin") roleDisabled = true;
-
-            // superadmin không đổi role chính mình
-            if (isSelf) roleDisabled = true;
+            canChangeRole = false;  // admin không được set role
         }
 
-        const roleBtn = `
+        if (currentRole === "superadmin") {
+            // không đổi role superadmin
+            if (targetRole === "superadmin") canChangeRole = false;
+
+            // không tự đổi role chính mình
+            if (isSelf) canChangeRole = false;
+        }
+
+        const roleButton = `
             <button class="btn-role"
-                ${roleDisabled
-                    ? "disabled style='opacity:0.4; cursor:not-allowed;'"
-                    : `onclick="toggleRole('${user._id}', '${user.role}')"`
-                }>
+                ${canChangeRole
+                ? `onclick="toggleRole('${user._id}', '${user.role}')"`
+                : `disabled style='opacity:0.4; cursor:not-allowed;'`}
+            >
                 Set: ${user.role === "admin" ? "User" : "Admin"}
             </button>
         `;
 
-        // ==================================================
-        // 2) DELETE BUTTON — BEHAVIORS EXACTLY AS REQUESTED
-        // ==================================================
-        let deleteBtn = "";
-
-        if (currentRole === "superadmin") {
-
-            // Không cho xoá superadmin → ẨN LUÔN
-            if (targetRole === "superadmin") {
-                deleteBtn = "";
-            }
-            else if (isSelf) {
-                // Superadmin không xoá chính mình
-                deleteBtn = `
-                    <button class="btn-delete" disabled style="opacity:0.4; cursor:not-allowed;">
-                        Delete
-                    </button>
-                `;
-            }
-            else {
-                deleteBtn = `
-                    <button class="btn-delete" onclick="deleteUser('${user._id}')">
-                        Delete
-                    </button>
-                `;
-            }
-        }
+        // =========================
+        // DELETE PERMISSION
+        // =========================
+        let canDelete = true;
 
         if (currentRole === "admin") {
-
-            // Admin chỉ xoá được user thường
-            if (targetRole === "user") {
-                deleteBtn = `
-                    <button class="btn-delete" onclick="deleteUser('${user._id}')">
-                        Delete
-                    </button>
-                `;
-            }
-            else {
-                deleteBtn = `
-                    <button class="btn-delete" disabled style="opacity:0.4; cursor:not-allowed;">
-                        Delete
-                    </button>
-                `;
-            }
+            if (targetRole !== "user") canDelete = false;
         }
 
-        // ==================================================
-        // 3) RENDER UI
-        // ==================================================
+        if (currentRole === "superadmin") {
+            if (targetRole === "superadmin" || isSelf) canDelete = false;
+        }
+
+        const deleteButton = `
+            <button class="btn-delete"
+                ${canDelete
+                ? `onclick="deleteUser('${user._id}')"`
+                : `disabled style='opacity:0.4; cursor:not-allowed;'`}
+            >
+                Delete
+            </button>
+        `;
+
+        // =========================
+        // RENDER HTML
+        // =========================
         div.innerHTML = `
             <div class="user-row-top">
                 <b>${user.email}</b> — ${renderRoleBadge(user.role)}
             </div>
 
             <div class="user-actions">
-                <button class="btn-view" onclick="loadUserConversations('${user._id}')">
-                    Conversations
-                </button>
-
-                ${roleBtn}
-                ${deleteBtn}
+                <button class="btn-view" onclick="loadUserConversations('${user._id}')">Conversations</button>
+                
+                ${roleButton}
+                ${deleteButton}
             </div>
 
             <div id="conv_${user._id}"></div>
         `;
 
+
         container.appendChild(div);
     });
 }
-
 
 const usersBtn = document.getElementById("loadUsersBtn");
 const convBtn = document.getElementById("loadAllConversationsBtn");
