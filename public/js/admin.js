@@ -65,69 +65,95 @@ async function loadUsers() {
         const targetRole = user.role;
         const isSelf = profile.id === user._id;
 
-        // =========================
-        // ROLE CHANGE PERMISSION
-        // =========================
+        // ==================================================
+        // 1) ROLE CHANGE BUTTON RULES
+        // ==================================================
         let canChangeRole = true;
 
         if (currentRole === "admin") {
-            canChangeRole = false;  // admin không được set role
+            canChangeRole = false; // admin không đổi role được
         }
 
         if (currentRole === "superadmin") {
-            // không đổi role superadmin
-            if (targetRole === "superadmin") canChangeRole = false;
-
-            // không tự đổi role chính mình
-            if (isSelf) canChangeRole = false;
+            if (targetRole === "superadmin" || isSelf) {
+                canChangeRole = false;
+            }
         }
 
-        const roleButton = `
+        const roleBtn = `
             <button class="btn-role"
                 ${canChangeRole
-                ? `onclick="toggleRole('${user._id}', '${user.role}')"`
-                : `disabled style='opacity:0.4; cursor:not-allowed;'`}
+                    ? `onclick="toggleRole('${user._id}', '${user.role}')"`
+                    : `disabled style='opacity:0.4; cursor:not-allowed;'`}
             >
                 Set: ${user.role === "admin" ? "User" : "Admin"}
             </button>
         `;
 
-        // =========================
-        // DELETE PERMISSION
-        // =========================
-        let canDelete = true;
+        // ==================================================
+        // 2) DELETE BUTTON RULES (CÓ SỬA THEO YÊU CẦU)
+        // ==================================================
+        let deleteBtn = "";
 
-        if (currentRole === "admin") {
-            if (targetRole !== "user") canDelete = false;
-        }
-
+        // ----- SUPERADMIN -----
         if (currentRole === "superadmin") {
-            if (targetRole === "superadmin" || isSelf) canDelete = false;
+
+            // ẨN delete khi target là superadmin (theo yêu cầu mới)
+            if (targetRole === "superadmin") {
+                deleteBtn = ""; // ẨN HOÀN TOÀN
+            }
+            else if (isSelf) {
+                // không xoá chính mình → disable
+                deleteBtn = `
+                    <button class="btn-delete" disabled style="opacity:0.4; cursor:not-allowed;">
+                        Delete
+                    </button>
+                `;
+            }
+            else {
+                // xoá được user + admin
+                deleteBtn = `
+                    <button class="btn-delete" onclick="deleteUser('${user._id}')">
+                        Delete
+                    </button>
+                `;
+            }
         }
 
-        const deleteButton = `
-            <button class="btn-delete"
-                ${canDelete
-                ? `onclick="deleteUser('${user._id}')"`
-                : `disabled style='opacity:0.4; cursor:not-allowed;'`}
-            >
-                Delete
-            </button>
-        `;
+        // ----- ADMIN -----
+        if (currentRole === "admin") {
+            if (targetRole === "user") {
+                // admin xoá được user thường
+                deleteBtn = `
+                    <button class="btn-delete" onclick="deleteUser('${user._id}')">
+                        Delete
+                    </button>
+                `;
+            } else {
+                // admin không xoá admin + superadmin → disable
+                deleteBtn = `
+                    <button class="btn-delete" disabled style="opacity:0.4; cursor:not-allowed;">
+                        Delete
+                    </button>
+                `;
+            }
+        }
 
-        // =========================
-        // RENDER HTML
-        // =========================
+        // ==================================================
+        // 3) RENDER HTML
+        // ==================================================
         div.innerHTML = `
             <div class="user-row-top">
                 <b>${user.email}</b> — ${renderRoleBadge(user.role)}
             </div>
 
             <div class="user-actions">
-                <button class="btn-view" onclick="loadUserConversations('${user._id}')">Conversations</button>
-                
-                ${roleButton}
-                ${deleteButton}
+                <button class="btn-view" onclick="loadUserConversations('${user._id}')">
+                    Conversations
+                </button>
+
+                ${roleBtn}
+                ${deleteBtn}
             </div>
 
             <div id="conv_${user._id}"></div>
