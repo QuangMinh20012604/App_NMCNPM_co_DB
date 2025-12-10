@@ -311,8 +311,16 @@ async function deleteConversation(convId, userId) {
     });
 
     alert("Đã xóa conversation");
-    loadUserConversations(userId);
+
+    if (userId) {
+        // reload danh sách hội thoại của user
+        loadUserConversations(userId);
+    } else {
+        // đang ở All Conversations → reload toàn bộ
+        loadAllConversations();
+    }
 }
+
 
 // ===============================
 // MODAL CLOSE EVENTS
