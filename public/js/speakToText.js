@@ -1,4 +1,10 @@
-// stt.js
+// ===== Speech To Text =====
+
+// Kết nối đến các element trong HTML
+const speakBtn = document.getElementById("speakBtn");
+const textInput = document.getElementById("textInput");
+const autoMode = document.getElementById("autoMode");
+
 let recognition =
   window.webkitSpeechRecognition ? new webkitSpeechRecognition() : null;
 let isListening = false;
@@ -22,7 +28,10 @@ if (recognition) {
 
   recognition.onresult = (e) => {
     textInput.value = e.results[0][0].transcript;
-    if (autoMode.checked) sendMessage(true);
+
+    if (autoMode && autoMode.checked) {
+      if (typeof sendMessage === "function") sendMessage(true);
+    }
   };
 
   speakBtn.onclick = () => {
