@@ -120,7 +120,7 @@ async function loadUsers() {
         // =========================
         div.innerHTML = `
             <div class="user-row-top">
-                <b>${user.email}</b> — ${renderRoleBadge(user.role)}
+                ${renderRoleBadge(user.role)} - <b>${user.email}</b>
             </div>
 
             <div class="user-actions">
