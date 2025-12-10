@@ -48,6 +48,13 @@ async function loadUsers() {
     const users = await res.json();
     container.innerHTML = "";
 
+    // ⭐ SẮP XẾP THEO THỨ TỰ: superadmin → admin → user
+    const roleOrder = { superadmin: 1, admin: 2, user: 3 };
+
+    users.sort((a, b) => {
+        return roleOrder[a.role] - roleOrder[b.role];
+    });
+
     users.forEach(user => {
         const div = document.createElement("div");
         div.className = "admin-user-row";
