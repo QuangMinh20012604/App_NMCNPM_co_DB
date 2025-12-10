@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin English Conversation App</title>
+
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/x-icon" href="/images/logo.ico">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="main-header">
+        <div class="header-left">
+            <img src="./images/logo-no-bg.png" class="app-logo">
+            <h1 class="app-title"><span style="color: #ff7aac;">ADMIN</span> English Conversation App</h1>
+        </div>
+
+        <button id="adminMenuToggle" class="menu-btn">
+            <i class="bi bi-list"></i>
+        </button>
+    </header>
+
+    <!-- MAIN ADMIN AREA -->
+    <main class="main-content">
+        <div class="container" style="position:relative; padding:20px;">
+            <h1 style="margin-bottom:20px; color: #00b4ff;">ADMIN MANAGEMENT</h1>
+
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button id="loadUsersBtn" class="admin-tab-btn admin-tab-active">
+                    <i class="bi bi-people"></i> Manage Users
+                </button>
+
+                <button id="loadAllConversationsBtn" class="admin-tab-btn">
+                    <i class="bi bi-chat-dots"></i> All Conversations
+                </button>
+
+            </div>
+
+            <hr style="margin:20px 0;">
+
+            <div id="adminContent" style="margin-top:20px;">
+                <!-- admin.js sẽ load nội dung vào đây -->
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer">
+        <div class="footer-title">&copy; Nhập môn công nghệ phần mềm HKI 2025-2026</div>
+        <div class="footer-team" id="status">
+            Team Members: <br>
+            <span>Huỳnh Thị Thảo Duyên (24880014)</span>
+            <span> &#8900; Nguyễn Dương Quang Minh (24880039)</span>
+            <span> &#8900; Trần Văn Tiết (24880060)</span>
+            <span> &#8900; Huỳnh Hữu Vinh (24880076)</span>
+        </div>
+    </footer>
+
+    <!-- SIDEBAR -->
+    <aside id="slideSidebar" class="slide-sidebar" aria-hidden="true">
+        <div class="sidebar-inner">
+
+            <div class="sidebar-header">
+                <img id="appLogo" src="/images/logo.png"
+                    style="width:56px;height:56px;border-radius:8px;object-fit:cover;"
+                    onerror="this.style.display='none'" />
+
+                <div style="flex:1;">
+                    <div id="sbProfileName" style="font-weight:700;"></div>
+                    <div id="sbProfileEmail" style="font-size:13px;color:#666;"></div>
+
+                </div>
+            </div>
+
+            <div style="margin-top:12px;display:flex;gap:8px;">
+                <button id="logoutBtnSidebar" class="small"
+                    style="background:#fff;color:#b21f2d;border:1px solid #ffdede;">Logout</button>
+            </div>
+
+            <hr style="margin:15px 0;border:none;border-top:1px solid #eee;" />
+
+            <!-- ADMIN MENU -->
+            <div style="display:flex;flex-direction:column;gap:8px;">
+                <button onclick="window.location.replace('index.html')">
+                    <i class="bi bi-arrow-left"></i> Back to App
+                </button>
+            </div>
+
+            <button id="adminCloseSidebar" type="button"
+                style="position:absolute;top:10px;right:10px;background:transparent;border:none;font-size:20px;cursor:pointer;">
+                ✖
+            </button>
+
+        </div>
+    </aside>
+
+    <div id="adminSidebarOverlay" class="sidebar-overlay" style="display:none;"></div>
+
+
+    <!-- SIDEBAR LOGIC -->
+    <script>
+        const menuToggle = document.getElementById('adminMenuToggle');
+        const slideSidebar = document.getElementById('slideSidebar');
+        const sidebarOverlay = document.getElementById('adminSidebarOverlay');
+        const closeSidebar = document.getElementById('adminCloseSidebar');
+
+        function openSidebar() {
+            slideSidebar.classList.add('open');
+            sidebarOverlay.style.display = 'block';
+            setTimeout(() => sidebarOverlay.style.opacity = '0.35', 10);
+        }
+
+        function closeSidebarFn() {
+            slideSidebar.classList.remove('open');
+            sidebarOverlay.style.opacity = '0';
+            setTimeout(() => sidebarOverlay.style.display = 'none', 200);
+        }
+
+        menuToggle.onclick = openSidebar;
+        closeSidebar.onclick = closeSidebarFn;
+        sidebarOverlay.onclick = closeSidebarFn;
+
+        // mở settings popup
+        document.getElementById("adminSettingsBtnSidebar").onclick = () => {
+            document.getElementById("settingsModal").style.display = "flex";
+        };
+    </script>
+
+    <!-- MODAL VIEW CONVERSATION -->
+    <div id="adminConvModal" class="admin-modal" style="display:none;">
+        <div class="admin-modal-content">
+            <button id="adminConvClose" class="admin-modal-close">✖</button>
+            <h2 id="adminConvTitle"></h2>
+
+            <div id="adminConvMessages" style="max-height:420px; overflow-y:auto;"></div>
+
+            <div style="text-align:right; margin-top:12px;">
+                <button id="adminConvOkBtn" class="btn-primary">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- SCRIPT CẦN CHO ADMIN -->
+    <script src="./js/helpers.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/settings.js"></script>
+    <script src="./js/admin.js"></script>
+
+</body>
+
+</html>

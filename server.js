@@ -11,7 +11,9 @@ const jwt = require("jsonwebtoken");
 dotenv.config();
 
 const app = express();
+
 app.use(express.json());
+app.use(express.static("public"));
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -489,10 +491,68 @@ Use 1–2 short sentences. Do NOT add examples.
 });
 
 
+// Get all conversations of a user (admin only)
+app.get("/admin/user/:id/conversations", authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const list = await Conversation.find({ userId: req.params.id }).sort({ createdAt: -1 });
+    res.json({ success: true, list });
+  } catch (err) {
+    console.error("Admin conversations list error:", err);
+    res.status(500).json({ error: "Failed to get conversations" });
+  }
+});
 
 
+// Count conversations of a user (admin only)
+app.get("/admin/user/:id/conversations/count", authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const count = await Conversation.countDocuments({ userId: req.params.id });
+    res.json({ success: true, count });
+  } catch (err) {
+    console.error("Admin conv count error:", err);
+    res.status(500).json({ error: "Failed to count conversations" });
+  }
+});
 
+// Get ALL conversations (admin only)
+app.get("/admin/conversations", authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const list = await Conversation.find()
+      .sort({ createdAt: -1 });
 
+    // vì bạn lưu userId là String, không phải ObjectId
+    // nên phải tự lấy email thủ công
+    const users = await User.find({});
+    const mapUser = {};
+    users.forEach(u => mapUser[u._id] = u.email);
+
+    const result = list.map(conv => ({
+      _id: conv._id,
+      title: conv.title,
+      messages: conv.messages,
+      user: {
+        id: conv.userId,
+        email: mapUser[conv.userId] || "Unknown"
+      }
+    }));
+
+    res.json({ success: true, list: result });
+
+  } catch (err) {
+    console.error("Admin load all conversations error:", err);
+    res.status(500).json({ error: "Failed to load conversations" });
+  }
+});
+
+app.patch("/admin/user/:id/role", authMiddleware, adminOnly, async (req, res) => {
+    try {
+        await User.updateOne({ _id: req.params.id }, { role: req.body.role });
+        res.json({ success: true });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Failed to update role" });
+    }
+});
 
 
 

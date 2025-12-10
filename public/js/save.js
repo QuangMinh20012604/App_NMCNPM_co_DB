@@ -151,14 +151,16 @@ async function showSavedListModal() {
             const title = document.createElement("div");
             title.textContent = item.title || "Untitled";
             title.style.fontWeight = "700";
+            title.style.marginBottom = "6px";
             row.appendChild(title);
 
             const actions = document.createElement("div");
             actions.style.display = "flex";
             actions.style.gap = "10px";
 
-            // VIEW (LOAD)
+            // VIEW
             const btnView = document.createElement("button");
+            btnView.className = "btn-view";
             btnView.textContent = "View";
             btnView.onclick = () => {
                 loadConversationDB(item._id);
@@ -167,22 +169,21 @@ async function showSavedListModal() {
 
             // RENAME
             const btnRename = document.createElement("button");
+            btnRename.className = "btn-rename";
             btnRename.textContent = "Rename";
             btnRename.onclick = async () => {
                 const newName = prompt("Nhập tên mới:");
                 if (newName) {
                     const finalName = await renameConversationDB(item._id, newName.trim());
-                    if (finalName) {
-                        alert("Tên mới: " + finalName);
-                    }
+                    if (finalName) alert("Đổi tên thành: " + finalName);
                     document.body.removeChild(modal);
                     showSavedListModal();
                 }
             };
 
-
             // DELETE
             const btnDelete = document.createElement("button");
+            btnDelete.className = "btn-delete";
             btnDelete.textContent = "Delete";
             btnDelete.onclick = async () => {
                 if (!confirm("Chắc chắn xóa?")) return;
@@ -190,6 +191,7 @@ async function showSavedListModal() {
                 document.body.removeChild(modal);
                 showSavedListModal();
             };
+
 
             actions.appendChild(btnView);
             actions.appendChild(btnRename);

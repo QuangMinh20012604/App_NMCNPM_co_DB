@@ -57,9 +57,9 @@
     </main>
 
     <footer class="main-footer">
-        <div class="footer-title">&copy; 2025 - English Conversation App</div>
+        <div class="footer-title">&copy; Nhập môn công nghệ phần mềm HKI 2025-2026</div>
         <div class="footer-team" id="status">
-            Team Members:
+            Team Members: <br>
             <span>Huỳnh Thị Thảo Duyên (24880014)</span>
             <span> &#8900; Nguyễn Dương Quang Minh (24880039)</span>
             <span> &#8900; Trần Văn Tiết (24880060)</span>
@@ -93,9 +93,16 @@
             <hr style="margin:15px 0;border:none;border-top:1px solid #eee;" />
 
             <div style="display:flex;flex-direction:column;gap:8px;">
+                <!-- USER MENU (mặc định) -->
+                <div id="userMenu" style="display:flex;flex-direction:column;gap:8px;">
+                    <button id="openSavedListSidebar"><i class="bi bi-folder2-open"></i> View Saved</button>
+                    <button id="settingsBtnSidebar"><i class="bi bi-gear"></i> Settings</button>
 
-                <button id="openSavedListSidebar"><i class="bi bi-folder2-open"></i> View Saved</button>
-                <button id="settingsBtnSidebar"><i class="bi bi-gear"></i> Settings</button>
+                    <!-- NÚT DÀNH CHO ADMIN -->
+                    <button id="gotoAdminBtn" style="display:none; color: #b21f2d;">
+                        <i class="bi bi-shield-lock"></i> Admin Panel
+                    </button>
+                </div>
             </div>
 
             <button id="closeSidebar" type="button"
@@ -122,8 +129,7 @@
             <form id="authLoginForm" class="auth-form">
                 <label>
                     <p style="font-weight: bold; font-size: 1;">Email:</p>
-                    <input type="email" id="loginEmail"
-                        placeholder="you@example.com" required>
+                    <input type="email" id="loginEmail" placeholder="you@example.com" required>
                 </label>
 
                 <label>
@@ -216,31 +222,7 @@
     </div>
 
 
-    <!-- SIDEBAR LOGIC -->
-    <script>
-        const menuToggle = document.getElementById('menuToggle');
-        const slideSidebar = document.getElementById('slideSidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const closeSidebar = document.getElementById('closeSidebar');
 
-        function openSidebar() {
-            slideSidebar.classList.add('open');
-            sidebarOverlay.style.display = 'block';
-            setTimeout(() => sidebarOverlay.style.opacity = '0.35', 10);
-        }
-
-        function closeSidebarFn() {
-            slideSidebar.classList.remove('open');
-            sidebarOverlay.style.opacity = '0';
-            setTimeout(() => sidebarOverlay.style.display = 'none', 200);
-        }
-
-        menuToggle.onclick = openSidebar;
-        closeSidebar.onclick = closeSidebarFn;
-        sidebarOverlay.onclick = closeSidebarFn;
-
-        
-    </script>
 
     <script src="./js/helpers.js"></script>
     <script src="./js/status.js"></script>

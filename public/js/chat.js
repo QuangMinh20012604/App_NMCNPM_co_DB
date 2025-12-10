@@ -46,11 +46,11 @@ async function sendMessage(auto = false) {
 
 
     setStatus("ready");
-    if (auto) speakAI();
-
+    
     appendAIMessage(data.reply);
     conversationHistory.push({ role: "bot", content: data.reply });
-
+    
+    if (auto) speakAI();
 
   } catch {
     appendMessage("Error", "❌ Server error.");

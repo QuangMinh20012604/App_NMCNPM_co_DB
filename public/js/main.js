@@ -1,9 +1,10 @@
-// main.js — FINAL VERSION (MongoDB Save Conversation)
-// ----------------------------------------------------
-(function () {
-    console.log("main.js starting...");
+console.log("main.js starting...");
 
-    // Helper for safer DOM binding
+(function () {
+
+    // ============================================
+    // SAFE WRAPPER
+    // ============================================
     function safe(id, fn) {
         const el = document.getElementById(id);
         if (!el) {
@@ -14,9 +15,9 @@
         catch (err) { console.error("Handler error for", id, err); }
     }
 
-    // ================================
+    // ============================================
     // AUTH POPUP EVENTS
-    // ================================
+    // ============================================
     safe("loginBtnSidebar", (el) => {
         el.onclick = () => {
             const m = document.getElementById("authModal");
@@ -31,9 +32,9 @@
         };
     });
 
-    // ================================
+    // ============================================
     // SETTINGS POPUP
-    // ================================
+    // ============================================
     safe("settingsBtnSidebar", (el) => {
         el.onclick = () => {
             const modal = document.getElementById("settingsModal");
@@ -57,31 +58,9 @@
         };
     });
 
-    safe("resetBtn", (el) => {
-        el.onclick = () => resetSettings();
-    });
-
-    // ================================
-    // SAVED LIST (MongoDB)
-    // ================================
-    safe("openSavedListSidebar", (el) => {
-        el.onclick = () => {
-            showSavedListModal();   // ← Load từ MongoDB
-        };
-    });
-
-    // ================================
-    // SAVE FULL CONVERSATION (MongoDB)
-    // ================================
-    safe("openSavePanelSidebar", (el) => {
-        el.onclick = () => {
-            saveFullConversationToDB();  // ← Lưu lên MongoDB
-        };
-    });
-
-    // ================================
-    // DELETE CHAT (chỉ xóa UI, không đụng DB)
-    // ================================
+    // ============================================
+    // DELETE CHAT
+    // ============================================
     safe("deleteBtnSidebar", (el) => {
         el.onclick = () => {
             if (confirm("Bạn muốn xóa hết nội dung chat trên màn hình?")) {
@@ -94,34 +73,107 @@
         };
     });
 
-    // ================================
-    // CLOSE SIDEBAR
-    // ================================
-    safe("closeSidebar", (el) => {
-        el.onclick = () => {
-            const slide = document.getElementById("slideSidebar");
-            const overlay = document.getElementById("sidebarOverlay");
+    // ============================================
+    // SIDEBAR TOGGLE
+    // ============================================
+    safe("menuToggle", (el) => {
+        const slide = document.getElementById("slideSidebar");
+        const overlay = document.getElementById("sidebarOverlay");
 
-            if (slide) slide.classList.remove("open");
-            if (overlay) {
-                overlay.style.opacity = 0;
-                setTimeout(() => overlay.style.display = "none", 200);
+        el.onclick = () => {
+            slide.classList.add("open");
+            overlay.style.display = "block";
+            setTimeout(() => overlay.style.opacity = "0.35", 10);
+        };
+    });
+
+    safe("closeSidebar", (el) => {
+        const slide = document.getElementById("slideSidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        el.onclick = () => {
+            slide.classList.remove("open");
+            overlay.style.opacity = 0;
+            setTimeout(() => overlay.style.display = "none", 200);
+        };
+    });
+
+    safe("sidebarOverlay", (el) => {
+        const slide = document.getElementById("slideSidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        el.onclick = () => {
+            slide.classList.remove("open");
+            overlay.style.opacity = 0;
+            setTimeout(() => overlay.style.display = "none", 200);
+        };
+    });
+
+    safe("openSavedListSidebar", (el) => {
+        el.onclick = () => {
+            try { showSavedListModal(); }
+            catch (err) { console.error("Error showing saved list:", err); }
+        };
+    });
+
+    safe("openSavedListSidebar", (el) => {
+        el.onclick = () => {
+            try { showSavedListModal(); }
+            catch (err) { console.error("Error showing saved list:", err); }
+        };
+    });
+
+    safe("resetBtn", (el) => {
+        el.onclick = () => {
+            try { resetConversation(); }
+            catch (err) { console.error("Reset error:", err); }
+        };
+    });
+
+    // ============================
+    // ⭐ SAVE CONVERSATION BUTTON
+    // ============================
+    safe("openSavePanelSidebar", (el) => {
+        el.onclick = () => {
+            try {
+                saveFullConversationToDB();
+            } catch (err) {
+                console.error("Save Conversation error:", err);
             }
         };
     });
 
-    // Load voices/settings safely
+
+
+    // ============================================
+    // LOAD SETTINGS + VOICES SAFELY
+    // ============================================
     try { if (typeof loadVoices === "function") loadVoices(); } catch { }
     try { if (typeof loadSettings === "function") loadSettings(); } catch { }
 
+    // ============================================
+    // ⭐⭐ ADMIN PANEL BUTTON ⭐⭐
+    // ============================================
+    safe("gotoAdminBtn", (el) => {
+        el.onclick = () => {
+            console.log("Going to admin.html...");
+            window.location.href = "admin.html";
+        };
+    });
+
+    // ============================================
+    // ⭐⭐ SHOW/HIDE ADMIN BUTTON ⭐⭐
+    // ============================================
+    function updateSidebarMenu() {
+        const profile = JSON.parse(localStorage.getItem("profile") || "{}");
+        const isAdmin = profile.role === "admin";
+
+        const gotoAdmin = document.getElementById("gotoAdminBtn");
+        if (gotoAdmin) gotoAdmin.style.display = isAdmin ? "block" : "none";
+    }
+
+    updateSidebarMenu();
+
     console.log("main.js: bindings completed.");
+
 })();
-
-
-function resetSettings() {
-    localStorage.removeItem("settings");
-    if (typeof loadSettings === "function") loadSettings();
-    alert("Reset trang thành công.");
-    location.reload();
-
-}
