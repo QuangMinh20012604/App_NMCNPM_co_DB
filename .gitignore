@@ -1,16 +1,68 @@
-# Ignore environment files
+# ==============================
+# ENVIRONMENT VARIABLES
+# ==============================
 .env
-.env.production
 .env.local
+.env.production
+.env.development
 
-# Node modules
+# ==============================
+# NODE MODULES
+# ==============================
 node_modules/
-
-# Logs
 npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# IDE junk
+# ==============================
+# OS / SYSTEM FILES
+# ==============================
 .DS_Store
+Thumbs.db
+
+# ==============================
+# LOGS & RUNTIME FILES
+# ==============================
+*.log
+logs/
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# PM2 logs
+.pnpm-debug.log*
+pm2.log
+pm2.pid
+
+# ==============================
+# EDITOR / IDE FILES
+# ==============================
 .vscode/
+.idea/
+*.swp
+
+# ==============================
+# BUILD / CACHE (if generated)
+# ==============================
+dist/
+build/
+.cache/
+*.tsbuildinfo
+
+# ==============================
+# FRONTEND FILES
+# (Your public folder is SAFE)
+# ==============================
+# Do NOT ignore public/ because it contains your HTML/CSS/JS
+# If you ever add build tools, uncomment below:
+# public/build/
+# public/dist/
+
+# ==============================
+# BACKUP / TEMP FILES
+# ==============================
+*.bak
+*.tmp
+temp/
+tmp/
