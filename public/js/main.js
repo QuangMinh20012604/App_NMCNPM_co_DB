@@ -1,6 +1,22 @@
 console.log("main.js starting...");
 
 (function () {
+    function renderRoleBadge(role) {
+        if (role === "superadmin") {
+            return `<span class="role-badge role-superadmin"><i class="bi bi-star-fill"></i> SUPERADMIN</span>`;
+        }
+        if (role === "admin") {
+            return `<span class="role-badge role-admin"><i class="bi bi-shield-lock"></i> ADMIN</span>`;
+        }
+        return `<span class="role-badge role-user"><i class="bi bi-person"></i> USER</span>`;
+    }
+
+    const p = getProfile();
+    const roleBox = document.getElementById("sbProfileRole");
+
+    if (roleBox && p.role) {
+        roleBox.innerHTML = p.role.toUpperCase();
+    }
 
     // ============================================
     // SAFE WRAPPER
@@ -166,7 +182,7 @@ console.log("main.js starting...");
     // ============================================
     function updateSidebarMenu() {
         const profile = JSON.parse(localStorage.getItem("profile") || "{}");
-        const isAdmin = profile.role === "admin";
+        const isAdmin = profile.role === "admin" || profile.role === "superadmin";
 
         const gotoAdmin = document.getElementById("gotoAdminBtn");
         if (gotoAdmin) gotoAdmin.style.display = isAdmin ? "block" : "none";

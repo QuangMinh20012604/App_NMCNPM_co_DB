@@ -9,8 +9,9 @@ function getToken() {
 
 function isAdmin() {
     const profile = JSON.parse(localStorage.getItem("profile") || "{}");
-    return profile.role === "admin";
+    return profile.role === "admin" || profile.role === "superadmin";
 }
+
 
 function ensureAdminAccess() {
     if (!isAdmin()) {
@@ -285,6 +286,24 @@ async function loadAllConversations() {
         container.appendChild(div);
     });
 }
+
+
+const roleBox = document.getElementById("sbProfileRole");
+if (roleBox && profile.role) {
+    roleBox.innerHTML = renderRoleBadge(profile.role);
+}
+
+
+const adminLogoutBtn = document.getElementById("logoutBtnSidebar");
+if (adminLogoutBtn) {
+    adminLogoutBtn.onclick = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("profile");
+        alert("Đã đăng xuất!");
+        window.location.replace("index.html");  // quay về trang chính
+    };
+}
+
 document.getElementById("loadUsersBtn").onclick = () => {
     setActiveTab("users");
     loadUsers();
