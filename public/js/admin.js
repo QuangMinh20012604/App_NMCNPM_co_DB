@@ -28,7 +28,7 @@ document.getElementById("sbProfileEmail").textContent = profile.email || "No ema
 
 
 // ===============================
-// LOAD ALL USERS
+// LOAD ALL USERS (FINAL VERSION)
 // ===============================
 async function loadUsers() {
     const token = getToken();
@@ -36,10 +36,7 @@ async function loadUsers() {
     container.classList.add("users-scroll-mode");
     container.classList.remove("all-conv-mode");
 
-
     container.innerHTML = "<p>Loading users...</p>";
-
-    container.classList.remove("all-conv-mode");
 
     const res = await fetch("/admin/users", {
         headers: { "Authorization": "Bearer " + token }
@@ -60,50 +57,53 @@ async function loadUsers() {
             border:1px solid #eee;
         `;
 
-        // Role của người đang đăng nhập
-        const currentRole = profile.role;
-        const targetRole = user.role;
+        // ==========================
+        // ROLE CHECKING
+        // ==========================
+        const currentRole = profile.role;   // role của người đang đăng nhập
+        const targetRole = user.role;       // role của user đang hiển thị
         const isSelf = profile.id === user._id;
 
         // ==================================================
-        // 1) ROLE CHANGE BUTTON RULES
+        // 1) ROLE BUTTON (Set: Admin/User) — ALWAYS SHOWN BUT DISABLED WHEN NO PERMISSION
         // ==================================================
-        let canChangeRole = true;
+        let roleDisabled = false;
 
         if (currentRole === "admin") {
-            canChangeRole = false; // admin không đổi role được
-        }
+            // admin không được đổi role ai
+            roleDisabled = true;
+        } 
+        else if (currentRole === "superadmin") {
+            // superadmin không đổi role superadmin khác
+            if (targetRole === "superadmin") roleDisabled = true;
 
-        if (currentRole === "superadmin") {
-            if (targetRole === "superadmin" || isSelf) {
-                canChangeRole = false;
-            }
+            // superadmin không đổi role chính mình
+            if (isSelf) roleDisabled = true;
         }
 
         const roleBtn = `
             <button class="btn-role"
-                ${canChangeRole
-                    ? `onclick="toggleRole('${user._id}', '${user.role}')"`
-                    : `disabled style='opacity:0.4; cursor:not-allowed;'`}
-            >
+                ${roleDisabled
+                    ? "disabled style='opacity:0.4; cursor:not-allowed;'"
+                    : `onclick="toggleRole('${user._id}', '${user.role}')"`
+                }>
                 Set: ${user.role === "admin" ? "User" : "Admin"}
             </button>
         `;
 
         // ==================================================
-        // 2) DELETE BUTTON RULES (CÓ SỬA THEO YÊU CẦU)
+        // 2) DELETE BUTTON — BEHAVIORS EXACTLY AS REQUESTED
         // ==================================================
         let deleteBtn = "";
 
-        // ----- SUPERADMIN -----
         if (currentRole === "superadmin") {
 
-            // ẨN delete khi target là superadmin (theo yêu cầu mới)
+            // Không cho xoá superadmin → ẨN LUÔN
             if (targetRole === "superadmin") {
-                deleteBtn = ""; // ẨN HOÀN TOÀN
+                deleteBtn = "";
             }
             else if (isSelf) {
-                // không xoá chính mình → disable
+                // Superadmin không xoá chính mình
                 deleteBtn = `
                     <button class="btn-delete" disabled style="opacity:0.4; cursor:not-allowed;">
                         Delete
@@ -111,7 +111,6 @@ async function loadUsers() {
                 `;
             }
             else {
-                // xoá được user + admin
                 deleteBtn = `
                     <button class="btn-delete" onclick="deleteUser('${user._id}')">
                         Delete
@@ -120,17 +119,17 @@ async function loadUsers() {
             }
         }
 
-        // ----- ADMIN -----
         if (currentRole === "admin") {
+
+            // Admin chỉ xoá được user thường
             if (targetRole === "user") {
-                // admin xoá được user thường
                 deleteBtn = `
                     <button class="btn-delete" onclick="deleteUser('${user._id}')">
                         Delete
                     </button>
                 `;
-            } else {
-                // admin không xoá admin + superadmin → disable
+            }
+            else {
                 deleteBtn = `
                     <button class="btn-delete" disabled style="opacity:0.4; cursor:not-allowed;">
                         Delete
@@ -140,7 +139,7 @@ async function loadUsers() {
         }
 
         // ==================================================
-        // 3) RENDER HTML
+        // 3) RENDER UI
         // ==================================================
         div.innerHTML = `
             <div class="user-row-top">
@@ -159,10 +158,10 @@ async function loadUsers() {
             <div id="conv_${user._id}"></div>
         `;
 
-
         container.appendChild(div);
     });
 }
+
 
 const usersBtn = document.getElementById("loadUsersBtn");
 const convBtn = document.getElementById("loadAllConversationsBtn");
