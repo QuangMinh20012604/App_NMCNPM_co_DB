@@ -16,9 +16,9 @@ if (recognition) {
   recognition.continuous = true;
   recognition.interimResults = true;
 
-  // Tăng timeout khi im lặng (Chrome có thể bỏ qua nhưng không lỗi)
-  recognition.speechTimeout = 8000;
-  recognition.noSpeechTimeout = 8000;
+  // ⭐ Tăng timeout khi im lặng (Chrome có thể bỏ qua nhưng không lỗi)
+  recognition.speechTimeout = 2500;
+  recognition.noSpeechTimeout = 2500;
 
 
   recognition.onstart = () => {
