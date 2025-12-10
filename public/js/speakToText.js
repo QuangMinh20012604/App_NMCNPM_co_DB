@@ -1,31 +1,22 @@
-// ===== Speech To Text =====
-
-// Kết nối đến các element trong HTML
-const speakBtn = document.getElementById("speakBtn");
-const textInput = document.getElementById("textInput");
-const autoMode = document.getElementById("autoMode");
-
 let recognition =
   window.webkitSpeechRecognition ? new webkitSpeechRecognition() : null;
+
 let isListening = false;
+let silenceTimer = null;  // ⭐ TIMER để auto stop khi im lặng
 
 if (recognition) {
   recognition.lang = "en-US";
 
-  // Cho nghe liên tục, không tắt sớm
-  recognition.continuous = true;
   recognition.interimResults = true;
-
-  // ⭐ Tăng timeout khi im lặng (Chrome có thể bỏ qua nhưng không lỗi)
-  recognition.speechTimeout = 2500;
-  recognition.noSpeechTimeout = 2500;
-
 
   recognition.onstart = () => {
     isListening = true;
     speakBtn.classList.add("listening");
     setStatus("listening");
     document.getElementById("micIcon").className = "bi bi-mic-fill";
+
+    //  Khi bắt đầu nói → set timer im lặng
+    resetSilenceTimer();
   };
 
   recognition.onend = () => {
@@ -34,23 +25,42 @@ if (recognition) {
     setStatus("ready");
     document.getElementById("micIcon").className = "bi bi-mic-mute-fill";
 
-    // ⭐ Tự động nghe lại nếu bật Auto Mode
+    clearTimeout(silenceTimer);
+
+    //  Nếu bật Auto Mode → tự bật lại sau khi end
     if (autoMode && autoMode.checked) {
       recognition.start();
     }
   };
 
-
   recognition.onresult = (e) => {
     textInput.value = e.results[0][0].transcript;
+
+    //  Mỗi lần nghe được tiếng → reset lại timer im lặng
+    resetSilenceTimer();
 
     if (autoMode && autoMode.checked) {
       if (typeof sendMessage === "function") sendMessage(true);
     }
   };
 
+
+  // ⭐ TIMER IM LẶNG 2 GIÂY
+  function resetSilenceTimer() {
+    clearTimeout(silenceTimer);
+    silenceTimer = setTimeout(() => {
+      console.log(" Auto stop after 2s silence");
+      recognition.stop();
+    }, 2000);
+  }
+
+  // ⭐ BUTTON START / STOP
   speakBtn.onclick = () => {
-    if (!isListening) recognition.start();
-    else recognition.stop();
+    if (!isListening) {
+      recognition.start();
+    } else {
+      clearTimeout(silenceTimer);
+      recognition.stop();
+    }
   };
 }
