@@ -255,7 +255,7 @@ app.get("/conversation/:id", authMiddleware, async (req, res) => {
   try {
     const conv = await Conversation.findById(req.params.id);
     if (!conv) return res.status(404).json({ error: "Not found" });
-    if (String(conv.userId) !== String(req.user.userId) && req.user.role !== "admin") return res.status(403).json({ error: "Not allowed" });
+    if (String(conv.userId) !== String(req.user.userId) && req.user.role !== "admin" && req.user.role !== "superadmin") return res.status(403).json({ error: "Not allowed" });
     res.json(conv);
   } catch (err) {
     console.error("Get conv error:", err);
@@ -268,7 +268,7 @@ app.delete("/conversation/:id", authMiddleware, async (req, res) => {
   try {
     const conv = await Conversation.findById(req.params.id);
     if (!conv) return res.status(404).json({ error: "Not found" });
-    if (String(conv.userId) !== String(req.user.userId) && req.user.role !== "admin") return res.status(403).json({ error: "Not allowed" });
+    if (String(conv.userId) !== String(req.user.userId) && req.user.role !== "admin" && req.user.role !== "superadmin") return res.status(403).json({ error: "Not allowed" });
     await Conversation.deleteOne({ _id: conv._id });
     res.json({ success: true });
   } catch (err) {
