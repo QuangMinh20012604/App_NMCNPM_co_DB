@@ -60,6 +60,36 @@ async function loadUsers() {
             border:1px solid #eee;
         `;
 
+        // Role của người đang đăng nhập
+        const currentRole = profile.role;
+        const targetRole = user.role;
+        const isSelf = profile.id === user._id;
+
+        // ===== DETERMINE DELETE PERMISSION =====
+        let canDelete = true;
+
+        if (currentRole === "admin") {
+            // admin chỉ xoá được user thường
+            if (targetRole !== "user") canDelete = false;
+        }
+
+        if (currentRole === "superadmin") {
+            // superadmin không xoá chính mình + không xoá superadmin khác
+            if (isSelf || targetRole === "superadmin") canDelete = false;
+        }
+
+        // ====== BUTTON DELETE FORMAT ======
+        let deleteButton = `
+            <button class="btn-delete"
+                ${canDelete
+                ? `onclick="deleteUser('${user._id}')"`
+                : `disabled style='opacity:0.4; cursor:not-allowed;'`
+            }>
+                Delete
+            </button>
+        `;
+
+        // ====== RENDER HTML ======
         div.innerHTML = `
             <div class="user-row-top">
                 <b>${user.email}</b> — ${renderRoleBadge(user.role)}
@@ -67,15 +97,16 @@ async function loadUsers() {
 
             <div class="user-actions">
                 <button class="btn-view" onclick="loadUserConversations('${user._id}')">Conversations</button>
+
                 <button class="btn-role" onclick="toggleRole('${user._id}', '${user.role}')">
                     Set: ${user.role === "admin" ? "User" : "Admin"}
                 </button>
-                <button class="btn-delete" onclick="deleteUser('${user._id}')">Delete User</button>
+
+                ${deleteButton}
             </div>
 
             <div id="conv_${user._id}"></div>
         `;
-
 
         container.appendChild(div);
     });
@@ -135,14 +166,22 @@ async function toggleRole(userId, currentRole) {
 async function deleteUser(userId) {
     if (!confirm("Xóa người dùng này?")) return;
 
-    await fetch(`/admin/user/${userId}`, {
+    const res = await fetch(`/admin/user/${userId}`, {
         method: "DELETE",
         headers: { "Authorization": "Bearer " + getToken() }
     });
 
-    alert("Đã xóa user");
+    const data = await res.json();
+
+    if (!data.success) {
+        alert("Không thể xóa: " + (data.error || "Lỗi không xác định"));
+        return;
+    }
+
+    alert("Đã xóa user!");
     loadUsers();
 }
+
 
 // ===============================
 // LOAD USER'S CONVERSATIONS

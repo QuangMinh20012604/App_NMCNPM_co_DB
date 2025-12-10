@@ -344,29 +344,34 @@ app.get("/admin/users", authMiddleware, adminOnly, async (req, res) => {
 });
 
 // Delete user (SUPERADMIN ONLY)
-app.delete("/admin/user/:id", authMiddleware, superOnly, async (req, res) => {
-  try {
-    const targetId = req.params.id;
+app.delete("/admin/user/:id", authMiddleware, adminOnly, async (req, res) => {
+    const requesterRole = req.user.role;
     const requesterId = req.user.userId;
+    const targetId = req.params.id;
 
     const target = await User.findById(targetId);
     if (!target) return res.status(404).json({ error: "User not found" });
 
-    // Không cho superadmin tự xóa chính mình
-    if (String(requesterId) === String(targetId)) {
-      return res.status(403).json({ error: "You cannot delete your own account" });
+    // Superadmin protections
+    if (requesterRole === "superadmin") {
+        if (String(requesterId) === String(targetId))
+            return res.status(403).json({ error: "Cannot delete yourself" });
+        if (target.role === "superadmin")
+            return res.status(403).json({ error: "Cannot delete another superadmin" });
+    }
+
+    // Admin protections
+    if (requesterRole === "admin") {
+        if (target.role !== "user")
+            return res.status(403).json({ error: "Admins can only delete normal users" });
     }
 
     await User.deleteOne({ _id: targetId });
     await Conversation.deleteMany({ userId: targetId });
 
     res.json({ success: true });
-
-  } catch (err) {
-    console.error("Admin delete user error:", err);
-    res.status(500).json({ error: "Failed to delete user" });
-  }
 });
+
 
 
 app.delete("/admin/conversation/:id", authMiddleware, adminOnly, async (req, res) => {
