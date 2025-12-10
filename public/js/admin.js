@@ -111,8 +111,23 @@ async function toggleRole(userId, currentRole) {
     });
 
     alert("Role updated!");
+
+    // cập nhật role của user hiện tại
+    const token = localStorage.getItem("token");
+    const resMe = await fetch("/me", {
+        headers: { "Authorization": "Bearer " + token }
+    });
+    const dataMe = await resMe.json();
+
+    if (dataMe.success) {
+        localStorage.setItem("profile", JSON.stringify(dataMe.user));
+    }
+
     loadUsers();
+
 }
+
+
 
 // ===============================
 // DELETE USER

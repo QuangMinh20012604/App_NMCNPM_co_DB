@@ -73,7 +73,9 @@ function authMiddleware(req, res, next) {
 
 function adminOnly(req, res, next) {
   if (!req.user) return res.status(401).json({ error: "No user" });
-  if (req.user.role !== "admin") return res.status(403).json({ error: "Admin only" });
+  if (req.user.role !== "admin" && req.user.role !== "superadmin") {
+    return res.status(403).json({ error: "Admin only" });
+  }
   next();
 }
 
@@ -102,7 +104,17 @@ app.post("/register", async (req, res) => {
     const user = await User.create({ name, email, passwordHash: hash });
 
     const token = jwt.sign({ userId: user._id, role: user.role }, JWT_SECRET, { expiresIn: "7d" });
-    res.json({ success: true, token, user: { id: user._id, name: user.name, email: user.email } });
+    res.json({
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role  
+      }
+    });
+
   } catch (err) {
     console.error("Register error:", err);
     res.status(500).json({ error: "Register failed" });
@@ -373,12 +385,12 @@ app.delete("/admin/conversation/:id", authMiddleware, adminOnly, async (req, res
 
 // Instruction text (keep as paragraph). We'll send it as a labeled user part.
 const NATURAL_INSTRUCTION = `
-INSTRUCTION: You are a friendly English conversation partner — like a real human friend.
-Speak in a warm, relaxed, natural way. Answer the user's message directly and simply.
-Do NOT analyze or repeat the user's question unless explicitly asked.
-Do NOT correct grammar unless the user asks for corrections.
-You may ask ONE short, natural follow-up question only if it feels appropriate.
-Keep replies short (about 1-4 sentences), friendly, and easy to understand for learners.
+  INSTRUCTION: You are a friendly English conversation partner — like a real human friend.
+  Speak in a warm, relaxed, natural way. Answer the user's message directly and simply.
+  Do NOT analyze or repeat the user's question unless explicitly asked.
+  Do NOT correct grammar unless the user asks for corrections.
+  You may ask ONE short, natural follow-up question only if it feels appropriate.
+  Keep replies short (about 1-4 sentences), friendly, and easy to understand for learners.
 `;
 
 // Helper to build contents WITHOUT using role: "system"
@@ -628,9 +640,22 @@ app.patch("/admin/user/:id/role", authMiddleware, superOnly, async (req, res) =>
   }
 });
 
+
 // Reset endpoint (client side should clear history)
 app.post("/reset", (req, res) => {
   res.json({ message: "OK - reset acknowledged" });
+});
+
+// =======================
+// GET CURRENT USER PROFILE
+// =======================
+app.get("/me", authMiddleware, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.userId).select("-passwordHash");
+        res.json({ success: true, user });
+    } catch (err) {
+        res.status(500).json({ error: "Failed to load user profile" });
+    }
 });
 
 

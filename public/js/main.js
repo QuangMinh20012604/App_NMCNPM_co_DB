@@ -7,7 +7,7 @@ console.log("main.js starting...");
     document.addEventListener("DOMContentLoaded", () => {
         initMenuToggle();
     });
-    
+
     function initMenuToggle() {
         const el = document.getElementById("menuToggle");
         const slide = document.getElementById("slideSidebar");
@@ -32,7 +32,8 @@ console.log("main.js starting...");
         return `<span class="role-badge role-user"><i class="bi bi-person"></i> USER</span>`;
     }
 
-    const p = getProfile();
+    const p = JSON.parse(localStorage.getItem("profile") || "{}");
+
     const roleBox = document.getElementById("sbProfileRole");
 
     if (roleBox && p.role) {
