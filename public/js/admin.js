@@ -232,6 +232,10 @@ async function loadUserConversations(userId) {
     const data = await res.json();
     container.innerHTML = "";
 
+    // ⭐ Sort theo title A → Z
+    data.list.sort((a, b) => a.title.localeCompare(b.title));
+
+
     if (!data.list.length) {
         container.innerHTML = "<i>No conversations found</i>";
         return;
@@ -355,6 +359,9 @@ async function loadAllConversations() {
 
     const data = await res.json();
     container.innerHTML = "";
+
+    // ⭐ Sort theo title A → Z
+    data.list.sort((a, b) => a.title.localeCompare(b.title));
 
     if (!data.list.length) {
         container.innerHTML = "<i>No conversations found</i>";
