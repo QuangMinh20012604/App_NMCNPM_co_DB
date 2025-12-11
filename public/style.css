@@ -1,4 +1,4 @@
-/*  ROOT  */
+/* Màu sắc chính của giao diện ứng dụng */
 :root {
     --bg: #f7f3ff;
     /* tím pastel nền */
@@ -11,7 +11,7 @@
     /* hồng pastel */
 }
 
-/*  GENERAL LAYOUT  */
+/* Layout chung cho toàn trang */
 html,
 body {
     height: 100%;
@@ -29,11 +29,13 @@ body {
     flex-direction: column;
 }
 
+/* Tiêu đề mặc định */
 h1 {
     text-align: center;
     margin-top: 20px;
 }
 
+/* Khu vực chứa nội dung chính của trang */
 .main-content {
     flex: 1;
     display: flex;
@@ -42,7 +44,7 @@ h1 {
     padding-top: 20px;
 }
 
-/*  HEADER  */
+/* Header trang chính: logo + tiêu đề + nút menu */
 .main-header {
     background: rgba(255, 201, 243, 0.3);
     padding: 12px 20px;
@@ -58,6 +60,7 @@ h1 {
     color: inherit;
 }
 
+/* Nút mở sidebar */
 .menu-btn {
     background: transparent;
     border: none;
@@ -66,6 +69,7 @@ h1 {
     color: #555;
 }
 
+/* Tiêu đề ứng dụng với hiệu ứng slide-in */
 .app-title {
     font-weight: 800;
     color: var(--accent2) !important;
@@ -76,13 +80,14 @@ h1 {
     animation: titleSlideIn 1.5s ease-out forwards;
 }
 
+/* Container chứa logo + tiêu đề */
 .header-left {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
-/* logo style */
+/* Logo ứng dụng trong header */
 .app-logo {
     width: 40px;
     height: 40px;
@@ -90,48 +95,20 @@ h1 {
     border-radius: 8px;
 }
 
+/* Kích thước chữ mặc định cho tiêu đề lớn */
 .app-title {
     font-size: 42px;
     line-height: 1.1;
 }
 
-/*  Set up cỡ chữ cho tiêu đề*/
-@media (max-width: 1200px) {
-    .app-title {
-        font-size: 34px;
-    }
-}
+/* Responsive giảm size tiêu đề theo độ rộng màn hình */
+@media (max-width: 1200px) { .app-title { font-size: 34px; } }
+@media (max-width: 900px) { .app-title { font-size: 30px; } }
+@media (max-width: 600px) { .app-title { font-size: 26px; } }
+@media (max-width: 430px) { .app-title { font-size: 22px; } }
+@media (max-width: 360px) { .app-title { font-size: 19px; } }
 
-/* Tablet */
-@media (max-width: 900px) {
-    .app-title {
-        font-size: 30px;
-    }
-}
-
-/* Mobile wide */
-@media (max-width: 600px) {
-    .app-title {
-        font-size: 26px;
-    }
-}
-
-/* Mobile small */
-@media (max-width: 430px) {
-    .app-title {
-        font-size: 22px;
-    }
-}
-
-/* Mobile tiny (old phones) */
-@media (max-width: 360px) {
-    .app-title {
-        font-size: 19px;
-    }
-}
-
-
-/*  FOOTER  */
+/* Trạng thái hiển thị thông tin nhóm trong footer */
 footer #status {
     font-size: 18px;
     font-weight: bold;
@@ -139,33 +116,30 @@ footer #status {
     text-align: center;
 }
 
+/* Footer toàn trang */
 .main-footer {
     margin-top: 3rem;
     padding: 20px;
     text-align: center;
     font-size: 14px;
     line-height: 1.6;
-
-    background: #f1e7ff;
-    /* tím pastel nhạt, dễ phân biệt */
+    background: #f1e7ff;          
     border-top: 2px solid #d5c4ff;
-    /* đường phân cách rõ ràng hơn */
     color: #444;
     box-shadow: 0 -4px 8px rgba(80, 0, 180, 0.06);
-    /* hiệu ứng tách lớp */
 }
 
 .main-footer p {
     margin: 4px 0;
 }
 
+/* Tiêu đề trong footer */
 .main-footer .footer-title {
     font-weight: 700;
     color: var(--accent);
-    /* dùng tím accent */
-    margin-bottom: 6px;
 }
 
+/* Khối container bao nội dung của app */
 .container {
     width: min(90%, 1400px);
     margin: 0 auto;
@@ -175,6 +149,7 @@ footer #status {
     box-shadow: 0 6px 25px rgba(80, 0, 180, 0.08);
 }
 
+/* Status nhỏ hơn trong container */
 #status {
     margin-top: 8px;
     color: #666;
@@ -182,6 +157,7 @@ footer #status {
     text-align: center;
 }
 
+/* Nút dịch tiếng ngay trong hội thoại */
 .inline-trans-btn {
     margin-top: 6px;
     padding: 4px 10px;
@@ -193,7 +169,7 @@ footer #status {
     color: var(--accent);
 }
 
-/*  CHAT WINDOW  */
+/* Khu vực khung chat chính */
 .chat {
     border: 1px solid #ddd;
     border-radius: 10px;
@@ -204,16 +180,16 @@ footer #status {
     margin-bottom: 15px;
 }
 
+/* Scrollbar tùy chỉnh */
 .chat::-webkit-scrollbar {
     width: 8px;
 }
-
 .chat::-webkit-scrollbar-thumb {
     background: rgba(80, 0, 180, 0.25);
     border-radius: 10px;
 }
 
-/*  MESSAGES  */
+/* Một khối tin nhắn */
 .msg {
     margin-bottom: 14px;
     padding: 12px 18px;
@@ -225,6 +201,7 @@ footer #status {
     white-space: pre-wrap;
 }
 
+/* Tin nhắn người dùng: màu xanh, canh phải */
 .msg.user {
     background: var(--accent2);
     color: #fff;
@@ -232,16 +209,15 @@ footer #status {
     text-align: right;
 }
 
+/* Tin nhắn AI: màu tím pastel */
 .msg.ai {
     position: relative;
     z-index: 1;
     background: #efeaff;
-    /* tím pastel */
     color: #111;
 }
 
-
-/*  TEXTAREA & SEND BUTTON  */
+/* Vùng nhập liệu: textarea chung */
 textarea {
     width: 100%;
     height: 60px;
@@ -255,11 +231,13 @@ textarea {
     transition: all 0.2s;
 }
 
+/* Hiệu ứng khi focus vào textarea */
 textarea:focus {
     border-color: var(--accent);
     box-shadow: 0 0 4px rgba(106, 90, 249, 0.4);
 }
 
+/* Style chung cho các loại nút */
 button {
     border: none;
     padding: 10px 18px;
@@ -269,44 +247,39 @@ button {
     transition: 0.2s;
 }
 
+/* Nút gửi tin nhắn: kích thước khớp với textarea */
 #sendBtn.send-btn {
-    height: 60px;
-    /* ← bằng textarea */
+    height: 60px;              
     display: flex;
     align-items: center;
-    /* ← icon + text vào giữa theo chiều dọc */
     justify-content: center;
     padding: 0 20px;
-    /* ← độ rộng nút */
     font-size: 16px;
     border-radius: 10px;
     background: var(--accent3);
-    /* hồng pastel */
     color: #fff;
     border: none;
-    cursor: pointer;
 }
 
+/* Icon trong nút gửi: căn giữa + có khoảng cách */
 #sendBtn.send-btn i {
     font-size: 20px;
-    /* icon to đẹp */
     margin-right: 6px;
-    /* icon cách chữ */
     line-height: 1;
-    /* tránh lệch icon */
 }
 
 #sendBtn.send-btn:hover {
     background: #ff639b;
 }
 
+/* Hàng chứa textarea và nút gửi */
 .input-row {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-/*  WORD CLICKABLE  */
+/* Một từ có thể click để mở popup dictionary */
 .word {
     position: relative;
     z-index: 10;
@@ -320,8 +293,7 @@ button {
     background: rgba(106, 90, 249, 0.12);
 }
 
-/*  DICTIONARY POPUP  */
-
+/* Popup giải nghĩa từ (dictionary) – container chính */
 .dict-popup {
     position: absolute;
     background: #ffffff;
@@ -337,6 +309,7 @@ button {
     animation: fadeIn 0.15s ease-in-out;
 }
 
+/* Header của popup từ điển */
 .dict-header {
     display: flex;
     justify-content: space-between;
@@ -345,12 +318,14 @@ button {
     margin-bottom: 6px;
 }
 
+/* Tựa đề từ vựng */
 .dict-title .dict-title-word {
     font-weight: 700;
     font-size: 20px;
     color: var(--accent);
 }
 
+/* Phiên âm */
 .dict-phonetic {
     font-weight: 500;
     color: #555;
@@ -358,7 +333,7 @@ button {
     font-size: 16px;
 }
 
-/* Buttons inside popup */
+/* Nút phát âm và nút đóng */
 .play-btn,
 .close-btn {
     border: none;
@@ -371,23 +346,24 @@ button {
     box-shadow: 0 2px 6px rgba(47, 108, 229, 0.12);
 }
 
+/* Nút đóng popup từ điển */
 .close-btn {
     background: #ffe8ef;
     color: #c41f3e;
 }
 
 
-/*  SIDEBAR  */
+/* ================================
+   SIDEBAR – MENU TRƯỢT BÊN PHẢI
+   Sidebar người dùng + admin
+   ================================ */
 .slide-sidebar {
     position: fixed;
     top: 0;
-    right: -380px;
+    right: -380px;             
     width: 360px;
     height: 100vh;
-
-    /* đổi màu pastel */
-    background: #faf3ff;
-
+    background: #faf3ff;       
     box-shadow: -14px 0 36px rgba(80, 0, 180, 0.12);
     border-left: 1px solid #eee;
     transition: right 0.22s ease, box-shadow 0.22s ease;
@@ -397,10 +373,12 @@ button {
     box-sizing: border-box;
 }
 
+/* Khi sidebar mở */
 .slide-sidebar.open {
     right: 0;
 }
 
+/* Lớp mờ phủ toàn màn hình khi sidebar mở */
 .sidebar-overlay {
     position: fixed;
     inset: 0;
@@ -410,6 +388,7 @@ button {
     z-index: 1900;
 }
 
+/* Header trên sidebar: chứa avatar + email */
 .sidebar-header {
     display: flex;
     align-items: center;
@@ -417,8 +396,9 @@ button {
 }
 
 
-
-/*  MODOLAS (LOGIN + SETTINGS + OTHERS)  */
+/* ================================
+   MODAL CHUNG (Save list, rename…)
+   ================================ */
 .modal {
     position: fixed;
     inset: 0;
@@ -429,12 +409,14 @@ button {
     z-index: 3000;
 }
 
+/* Phần nền tối phía sau modal */
 .modal-backdrop {
     position: absolute;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
 }
 
+/* Panel nội dung modal */
 .modal-panel {
     position: relative;
     width: 360px;
@@ -445,11 +427,15 @@ button {
     box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
 }
 
-.modal-panel>button {
+/* Tạo khoảng cách nút Close */
+.modal-panel > button {
     margin-top: 16px;
-    /* tạo khoảng cách đẹp */
 }
 
+
+/* ================================
+   AUTH MODAL (Login – Register)
+   ================================ */
 .auth-modal {
     position: fixed;
     inset: 0;
@@ -462,6 +448,7 @@ button {
     z-index: 5000;
 }
 
+/* Lớp mờ nền phía sau auth form */
 .auth-backdrop {
     position: absolute;
     inset: 0;
@@ -469,6 +456,7 @@ button {
     backdrop-filter: blur(3px);
 }
 
+/* Panel chính của form đăng nhập/đăng ký */
 .auth-panel {
     position: relative;
     width: 480px;
@@ -479,10 +467,9 @@ button {
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
     z-index: 5001;
     animation: authFadeIn .25s ease;
-
 }
 
-
+/* Nút đóng modal đăng nhập */
 .auth-close,
 .settings-close {
     position: absolute;
@@ -496,6 +483,7 @@ button {
     cursor: pointer;
 }
 
+/* Tabs Login / Register */
 .auth-tabs {
     display: flex;
     justify-content: center;
@@ -505,22 +493,21 @@ button {
     background: #eee;
     border-radius: 10px;
     font-weight: 600;
-    cursor: pointer;
-    border: none;
-    font-size: 15px;
 }
 
+/* Tab Login được chọn */
 #authTabLogin.active {
     background: var(--accent2) !important;
     color: white;
 }
 
-/* Tab Đăng ký = hồng */
+/* Tab Register được chọn */
 #authTabRegister.active {
     background: var(--accent3) !important;
     color: white;
 }
 
+/* Layout form đăng nhập / đăng ký */
 .auth-form {
     display: flex;
     flex-direction: column;
@@ -534,6 +521,7 @@ button {
     color: #333;
 }
 
+/* Input trong form */
 .auth-form input {
     margin-top: 4px;
     padding: 12px;
@@ -542,51 +530,51 @@ button {
     border: 1px solid #ccc;
 }
 
+/* Nút submit form */
 .auth-btn {
     margin-top: 10px;
     padding: 12px;
     background: var(--accent2);
     color: white;
-    border: none;
-    font-size: 16px;
     border-radius: 10px;
     cursor: pointer;
 }
 
-/* Nút Đăng nhập = xanh */
+/* Nút Login */
 .login-btn {
     background: var(--accent2) !important;
 }
 
+/* Hover nút login */
 .login-btn:hover {
     background: #0094d6 !important;
 }
 
-/* Nút Đăng ký = hồng */
+/* Nút Register */
 .register-btn {
     background: var(--accent3) !important;
 }
 
+/* Hover nút register */
 .register-btn:hover {
     background: #ff5f98 !important;
 }
 
-
-/*  SAVE LIST BUTTONS  */
+/* Hàng chứa mỗi conversation trong danh sách Save */
 .saved-row {
     padding: 10px 0 !important;
-    /* tăng gấp 1.5 lần */
     margin-bottom: 10px !important;
 }
 
+/* Nhóm nút thao tác (View / Rename / Delete) */
 .saved-actions {
     display: flex;
     gap: 10px;
     position: relative;
     z-index: 5;
-    /* tránh đè nút View Saved */
 }
 
+/* Nút trong sidebar */
 .slide-sidebar button {
     background: #f5bbd1;
 }
@@ -595,16 +583,15 @@ button {
     background: var(--accent3);
 }
 
-
+/* Nút actions bên trong modal Save List */
 .modal-panel .saved-actions button {
     min-width: 90px;
-    /* đồng đều chiều rộng */
     padding: 8px 0;
     font-size: 14px;
     border-radius: 8px;
-    text-align: center;
 }
 
+/* Nút load conversation */
 #adminSection button {
     background: #ffe8e8;
     border: 1px solid #ffb3b3;
@@ -615,7 +602,7 @@ button {
     background: #ffdddd;
 }
 
-
+/* Style nút load */
 .btn-load {
     background: var(--accent2);
     color: white;
@@ -625,6 +612,7 @@ button {
     background: #2f6ce5;
 }
 
+/* Nút xem hội thoại */
 .btn-view {
     background: var(--accent3);
     color: #333;
@@ -634,6 +622,7 @@ button {
     background: #b19bff;
 }
 
+/* Nút rename hội thoại */
 .btn-rename {
     background: var(--accent2);
     color: white;
@@ -643,6 +632,7 @@ button {
     background: #2f6ce5;
 }
 
+/* Nút delete hội thoại */
 .btn-delete {
     background: #ff6b6b;
     color: white;
@@ -652,11 +642,16 @@ button {
     background: #e04545;
 }
 
-/* SETTINGS UI */
+
+/* ==========================
+   SETTINGS POPUP (giọng đọc)
+   ========================== */
+
 #settingsModal .auth-panel {
     padding-bottom: 20px;
 }
 
+/* Wrapper chứa các lựa chọn cấu hình */
 .settings-wrapper {
     display: flex;
     flex-direction: column;
@@ -664,6 +659,7 @@ button {
     margin-top: 12px;
 }
 
+/* Dropdown chung */
 .setting-select {
     margin-top: 6px;
     padding: 10px;
@@ -671,6 +667,7 @@ button {
     width: 100%;
 }
 
+/* Nút test giọng đọc */
 .voice-test-btn {
     padding: 8px 12px;
     border-radius: 8px;
@@ -678,7 +675,6 @@ button {
     border: 1px solid #c3c8ff;
     cursor: pointer;
     font-size: 18px;
-    line-height: 18px;
     transition: 0.2s;
 }
 
@@ -686,7 +682,11 @@ button {
     background: #d7dbff;
 }
 
-/*  COMPONENTS  */
+
+/* ==========================
+   TOGGLE SWITCH (Auto mode)
+   ========================== */
+
 .toggle {
     position: relative;
     width: 46px;
@@ -697,10 +697,12 @@ button {
     transition: 0.3s;
 }
 
+/* Input hidden */
 .toggle input {
     display: none;
 }
 
+/* Nút tròn bên trong toggle */
 .toggle span {
     position: absolute;
     width: 20px;
@@ -712,58 +714,50 @@ button {
     transition: 0.3s;
 }
 
-.toggle input:checked+span {
+/* Khi bật toggle */
+.toggle input:checked + span {
     left: 24px;
     background: var(--accent);
 }
 
-.toggle input:checked~.toggle {
+.toggle input:checked ~ .toggle {
     background: var(--accent);
 }
 
-/*  ANIMATIONS  */
-@keyframes authFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-12px);
-    }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* ==========================
+   ANIMATIONS CHUNG
+   ========================== */
+
+@keyframes authFadeIn {
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes titleSlideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-12px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Hiệu ứng khi micro đang ở chế độ nghe */
 .listening {
     background: #01fd01 !important;
     color: #fff !important;
     animation: pulse 1s infinite;
 }
 
+/* Nhịp tim / hiệu ứng sáng lan rộng */
 @keyframes pulse {
-    0% {
-        box-shadow: 0 0 0 0 rgba(58, 160, 83, 0.5);
-    }
-
-    100% {
-        box-shadow: 0 0 0 15px rgba(255, 0, 0, 0);
-    }
+    0%   { box-shadow: 0 0 0 0 rgba(58, 160, 83, 0.5); }
+    100% { box-shadow: 0 0 0 15px rgba(255, 0, 0, 0); }
 }
 
 
-/* =========== ADMIN POPUP =========== */
+/* ==========================
+   ADMIN – POPUP CONVERSATIONS
+   ========================== */
+
+/* Container cho các trang admin */
 body:has(#adminContent) .container {
     width: 60% !important;
     max-width: 750px !important;
@@ -771,6 +765,7 @@ body:has(#adminContent) .container {
     padding: 25px;
 }
 
+/* Modal overlay của admin */
 .admin-modal {
     position: fixed;
     inset: 0;
@@ -782,31 +777,26 @@ body:has(#adminContent) .container {
     z-index: 9999;
 }
 
+/* Panel nội dung hội thoại admin */
 .admin-modal-content {
     background: #fff;
     padding: 22px;
     border-radius: 14px;
     width: 90%;
     max-width: 650px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.25);
     animation: adminPopup .25s ease-out;
 }
 
+/* Animation mở popup admin */
 @keyframes adminPopup {
-    from {
-        opacity: 0;
-        transform: scale(.95) translateY(12px);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-    }
+    from { opacity: 0; transform: scale(.95) translateY(12px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
 }
 
+/* Tab chuyển Users / Conversations */
 .admin-tab-btn {
     background: #f2f2f2;
-    border: none;
     padding: 10px 16px;
     border-radius: 8px;
     cursor: pointer;
@@ -818,27 +808,25 @@ body:has(#adminContent) .container {
     background: var(--accent2);
 }
 
-/* ACTIVE STATE */
+/* Tab đang active */
 .admin-tab-active {
-    background:  var(--accent3);
+    background: var(--accent3);
     color: white !important;
     box-shadow: 0 3px 10px rgba(0,0,0,0.15);
 }
 
-
+/* Nút đóng popup */
 .admin-modal-close {
     float: right;
     background: transparent;
     border: none;
     font-size: 20px;
     cursor: pointer;
-    margin-bottom: 10px;
 }
 
-/* bubbles */
+/* Tin nhắn hiển thị trong popup admin */
 .admin-bubble {
     max-width: 50% !important;
-    /* Giảm còn nửa */
     padding: 12px 16px;
     border-radius: 12px;
     margin-bottom: 10px;
@@ -846,62 +834,7 @@ body:has(#adminContent) .container {
     line-height: 1.45;
 }
 
-/*                                                           Admin web                                                                                          */
-
-.role-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: white;
-  gap: 6px;
-}
-
-.role-user {
-  background: #888;
-}
-
-.role-admin {
-  background: #1769ff;
-}
-
-.role-superadmin {
-  background: linear-gradient(135deg, #6a00ff, #c400ff);
-}
-
-
-/* ===== ADMIN POPUP ===== */
-.admin-popup {
-    background: white;
-    padding: 25px;
-    width: 650px;
-    max-height: 80vh;
-    overflow-y: auto;
-    border-radius: 14px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
-    animation: fadeScale 0.2s ease-out;
-}
-
-@keyframes fadeScale {
-    from {
-        transform: scale(0.9);
-        opacity: 0;
-    }
-
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.admin-popup h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
-}
-
-/* USER + BOT LABELS */
+/* Label của user */
 .msg-user-label {
     text-align: right;
     color: var(--accent2);
@@ -909,6 +842,7 @@ body:has(#adminContent) .container {
     margin-bottom: 4px;
 }
 
+/* Label của bot */
 .msg-bot-label {
     text-align: left;
     color: var(--accent3);
@@ -916,7 +850,7 @@ body:has(#adminContent) .container {
     margin-bottom: 4px;
 }
 
-/* MESSAGE BUBBLES */
+/* Bubble User */
 .admin-bubble.user {
     background: var(--accent2) !important;
     color: #fff;
@@ -925,7 +859,7 @@ body:has(#adminContent) .container {
     text-align: right;
 }
 
-/* AI → nằm bên trái + accent3 */
+/* Bubble AI */
 .admin-bubble.bot {
     background: var(--accent3) !important;
     color: #fff;
@@ -934,8 +868,60 @@ body:has(#adminContent) .container {
 }
 
 
+/* ==========================
+   ROLE BADGES (User/Admin/Superadmin)
+   ========================== */
 
-/* ===== USER ROW ===== */
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    gap: 6px;
+}
+
+.role-user {
+    background: #888;
+}
+
+.role-admin {
+    background: #1769ff;
+}
+
+.role-superadmin {
+    background: linear-gradient(135deg, #6a00ff, #c400ff);
+}
+
+
+/* ==========================
+   ADMIN POPUP LỚN (xem hội thoại)
+   ========================== */
+
+.admin-popup {
+    background: white;
+    padding: 25px;
+    width: 650px;
+    max-height: 80vh;
+    overflow-y: auto;
+    border-radius: 14px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    animation: fadeScale 0.2s ease-out;
+}
+
+@keyframes fadeScale {
+    from { transform: scale(0.9); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+}
+
+.admin-popup h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+}
+
+/* Khối chứa một user trong danh sách Manage Users */
 .user-row {
     background: #fafafa;
     border-radius: 10px;
@@ -944,17 +930,19 @@ body:has(#adminContent) .container {
     border: 1px solid #eee;
 }
 
+/* Dòng phía trên gồm role badge + email */
 .user-row-top {
     justify-content: flex-start !important;
     gap: 10px;
     margin-bottom: 12px;
 }
 
+/* Hàng nút thao tác của user: Conversations / Role / Delete */
 .user-actions button {
     margin-right: 8px;
 }
 
-/* BUTTON STYLING */
+/* Nút xem conversation của user */
 .btn-view {
     background: #6a5af9;
     color: white;
@@ -963,6 +951,7 @@ body:has(#adminContent) .container {
     border-radius: 6px;
 }
 
+/* Nút xóa user */
 .btn-delete {
     background: #ff6b6b;
     color: white;
@@ -971,6 +960,7 @@ body:has(#adminContent) .container {
     border-radius: 6px;
 }
 
+/* Nút đổi role user */
 .btn-role {
     background: #00b894;
     color: white;
@@ -980,23 +970,27 @@ body:has(#adminContent) .container {
 }
 
 
-/* ==== CONVERSATION LIST ==== */
+/* ================================
+   CONVERSATION ITEM (trong Admin)
+   ================================ */
+
 .conv-item {
     background: #f0f3ff;
     border: 1px solid #d6dbff;
     border-radius: 12px;
     padding: 14px 16px;
     margin-bottom: 12px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
 }
 
+/* Hàng nút View/Delete trong conv item */
 .conv-actions {
     margin-top: 8px;
     display: flex;
     gap: 10px;
 }
 
-/* Make the conversation list smaller and cleaner */
+/* Tối ưu kích thước conversation item trên trang Admin */
 #adminContent .conv-item {
     width: 55%;
     max-width: 450px;
@@ -1005,51 +999,42 @@ body:has(#adminContent) .container {
     border-radius: 12px;
     background: #eef1ff;
     border: 1px solid #d4d9ff;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 3px 12px rgba(0,0,0,0.06);
 }
 
-/* Giới hạn chiều cao danh sách All Conversations + tạo scroll */
+/* Danh sách All Conversations có scroll */
 #adminContent.all-conv-mode {
     max-height: 60vh;
-    /* chiếm 75% chiều cao màn hình */
     overflow-y: auto;
-    /* bật scroll */
     padding-right: 10px;
-    /* để không đè scrollbar */
 }
 
-/* Conversation list bên trong mỗi user */
+/* Danh sách hội thoại riêng của 1 user */
 .user-conv-list {
     max-height: 300px;
-    /* chiều cao hợp lý */
     overflow-y: auto;
-    /* bật scroll */
     padding-right: 10px;
-
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* căn giữa các conv-item */
     gap: 12px;
 }
 
-/* conv-item trong user phải giống loại AllConv */
+/* Mỗi conversation trong user */
 .user-conv-list .conv-item {
     width: 80% !important;
     max-width: 480px;
     margin: 0 auto;
 }
 
-
-/* Scroll cho danh sách user trong Manage Users */
+/* Scroll toàn bộ danh sách user (Manage Users) */
 #adminContent.users-scroll-mode {
-    max-height: 60vh;        /* chiều cao giới hạn */
-    overflow-y: auto;        /* bật scroll dọc */
+    max-height: 60vh;
+    overflow-y: auto;
     padding-right: 10px;
 }
 
-
-
+/* Khung chứa toàn bộ message trong popup conversation */
 #adminConvMessages {
     width: calc(100% - 40px) !important;
     max-width: 580px !important;

@@ -1,10 +1,21 @@
-// chat.js
+// =======================================================
+// Chat module – quản lý gửi/nhận tin nhắn và hiển thị UI
+// =======================================================
+
+// Lịch sử cuộc hội thoại lưu ở client
 let conversationHistory = [];
+
+// Lưu conversationId (nếu đã tạo từ backend)
 let conversationId = localStorage.getItem("conversationId") || null;
+
+// Thông tin người dùng hiện tại (dùng để hiển thị tên)
 const profile = JSON.parse(localStorage.getItem("profile") || "{}");
 const displayName = profile.name || "You";
 
+// Gửi tin nhắn khi bấm nút Send
 sendBtn.onclick = () => sendMessage();
+
+// Gửi tin nhắn khi nhấn Enter (ngoại trừ Shift+Enter)
 textInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
@@ -12,12 +23,18 @@ textInput.addEventListener("keydown", (e) => {
   }
 });
 
+// =======================================================
+// Gửi tin nhắn lên server + cập nhật UI
+// auto = true được dùng khi chế độ tự đọc
+// =======================================================
 async function sendMessage(auto = false) {
   const msg = textInput.value.trim();
   if (!msg) return;
 
+  // Hiện tin người dùng
   appendMessage(displayName, msg, "user");
 
+  // Lưu vào lịch sử hội thoại local
   conversationHistory.push({ role: "user", content: msg });
 
   textInput.value = "";
@@ -26,6 +43,7 @@ async function sendMessage(auto = false) {
   try {
     const token = localStorage.getItem("token");
 
+    // Gửi yêu cầu chat lên backend
     const res = await fetch("/chat", {
       method: "POST",
       headers: {
@@ -35,29 +53,33 @@ async function sendMessage(auto = false) {
       body: JSON.stringify({
         message: msg,
         history: conversationHistory,
-        conversationId: conversationId  // gửi nếu có
+        conversationId: conversationId   // server sẽ append nếu tồn tại
       }),
     });
 
-
     const data = await res.json();
 
-    //await saveToDB(msg, data.reply);
-
-
     setStatus("ready");
-    
+
+    // Hiển thị tin nhắn AI
     appendAIMessage(data.reply);
+
+    // Lưu vào lịch sử hội thoại local
     conversationHistory.push({ role: "bot", content: data.reply });
-    
+
+    // Tự đọc tin nhắn (nếu bật Auto Speak)
     if (auto) speakAI();
 
   } catch {
+    // Lỗi kết nối server
     appendMessage("Error", "❌ Server error.");
     setStatus("error");
   }
 }
 
+// =======================================================
+// Thêm tin nhắn người dùng vào màn hình chat
+// =======================================================
 function appendMessage(sender, text, cls) {
   const div = document.createElement("div");
   div.className = `msg ${cls}`;
@@ -66,17 +88,23 @@ function appendMessage(sender, text, cls) {
   smartScroll();
 }
 
+// =======================================================
+// Thêm tin nhắn AI + highlight từ + tạo nút dịch
+// =======================================================
 function appendAIMessage(text) {
   const div = document.createElement("div");
   div.className = "msg ai";
 
+  // Nhãn "AI:"
   const header = document.createElement("strong");
   header.textContent = "AI:";
   div.appendChild(header);
 
+  // Vùng chứa tiếng Anh, mỗi từ là <span class="word">
   const engSpan = document.createElement("span");
   engSpan.className = "ai-english";
 
+  // Split từng từ để tạo các span từ điển
   const html = text
     .split(/\s+/)
     .map(
@@ -90,6 +118,7 @@ function appendAIMessage(text) {
   engSpan.innerHTML = html;
   div.appendChild(engSpan);
 
+  // Thanh công cụ bên dưới (nút dịch)
   const controls = document.createElement("div");
   controls.style.marginTop = "8px";
   controls.style.display = "flex";
@@ -99,11 +128,13 @@ function appendAIMessage(text) {
   transBtn.className = "inline-trans-btn";
   transBtn.textContent = "🇻🇳 Translate";
   transBtn.onclick = () => translateMessage(div, text);
-  controls.appendChild(transBtn);
 
+  controls.appendChild(transBtn);
   div.appendChild(controls);
+
   messages.appendChild(div);
 
+  // Gán sự kiện click từ điển cho từng từ
   setTimeout(() => {
     div.querySelectorAll(".word").forEach((span) => {
       span.onclick = () => lookupWord(span.dataset.word, span);
@@ -113,28 +144,33 @@ function appendAIMessage(text) {
   smartScroll();
 }
 
-// ===== RESET CHAT =====
+// =======================================================
+// Reset toàn bộ cuộc hội thoại trên giao diện
+// Không xóa trên server, chỉ reset UI và biến local
+// =======================================================
 function resetConversation() {
   const msgBox = document.getElementById("messages");
   if (msgBox) msgBox.innerHTML = "";
 
-  // Xóa toàn bộ lịch sử cuộc hội thoại
+  // Xóa nội dung lịch sử (client-side)
   if (typeof conversationHistory !== "undefined") {
     conversationHistory.length = 0;
   }
 
-  // Đặt trạng thái sẵn sàng
+  // Trả trạng thái về "ready" nếu module status tồn tại
   try { setStatus("ready"); } catch (e) { }
 
-  // Chỉ hiện thông báo OK
   alert("Đã reset cuộc hội thoại.");
-
 }
 
 
+// =======================================================
+// Lưu tin nhắn vào database qua /conversation/save
+// Tự tạo conversation mới nếu chưa có ID
+// =======================================================
 async function saveToDB(userMsg, botMsg) {
   const token = localStorage.getItem("token");
-  if (!token) return; // chưa login → không lưu
+  if (!token) return; // Người dùng chưa đăng nhập → không lưu DB
 
   const payload = {
     messages: [
@@ -143,7 +179,9 @@ async function saveToDB(userMsg, botMsg) {
     ]
   };
 
-  // Nếu chưa có conversation → tạo mới
+  // =====================================================
+  // Trường hợp chưa có conversationId → tạo mới conversation
+  // =====================================================
   if (!conversationId) {
     payload.title = "New Conversation";
 
@@ -165,7 +203,9 @@ async function saveToDB(userMsg, botMsg) {
     return;
   }
 
-  // Nếu đã có → append message
+  // =====================================================
+  // Nếu đã có conversationId → append message vào DB
+  // =====================================================
   payload.conversationId = conversationId;
 
   const res = await fetch("/conversation/save", {

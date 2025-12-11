@@ -11,12 +11,15 @@
 </head>
 
 <body>
+
+    <!-- HEADER: logo + tên app + nút mở sidebar -->
     <header class="main-header">
         <div class="header-left">
             <img src="./images/logo-no-bg.png" class="app-logo">
             <h1 class="app-title">English Conversation App</h1>
         </div>
 
+        <!-- Nút mở sidebar -->
         <button id="menuToggle" class="menu-btn">
             <i class="bi bi-list"></i>
         </button>
@@ -26,38 +29,50 @@
     <main class="main-content">
         <div class="container" style="position:relative;">
 
+            <!-- Khu vực hiển thị tin nhắn -->
             <div id="messages" class="chat"></div>
 
+            <!-- Input + Send -->
             <div class="input-row" style="margin-top:10px;">
                 <textarea id="textInput" placeholder="Type or speak here..."></textarea>
+
+                <!-- Nút gửi tin nhắn -->
                 <button id="sendBtn" type="button" class="send-btn">
                     <i class="bi bi-send-fill"></i> Send
                 </button>
             </div>
 
-
+            <!-- Các nút chức năng bổ sung -->
             <div style="margin-top:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+
+                <!-- Bật microphone (Speech-to-Text) -->
                 <button id="speakBtn"><i id="micIcon" class="bi bi-mic-mute-fill"></i> Speak</button>
+
+                <!-- Auto Mode: tự gửi khi nói xong -->
                 <label class="toggle">
                     <input type="checkbox" id="autoMode">
-                    <span>
-                    </span>
+                    <span></span>
                 </label>
                 Auto Mode
 
-                <button id="listenBtn"><i class="bi bi-megaphone" style="color: rgb(255, 0, 0);"></i> Listen
-                    Reply</button>
-                <button id="openSavePanelSidebar"><i class="bi bi-floppy" style="color: rgb(0, 17, 255);"></i> Save
-                    Conversation</button>
-                <button id="resetBtn"><i class="bi bi-arrow-counterclockwise" style="color: rgb(0, 163, 0);"></i>
-                    Reset</button>
+                <!-- Nút đọc lại đáp án của AI -->
+                <button id="listenBtn"><i class="bi bi-megaphone" style="color: rgb(255, 0, 0);"></i> Listen Reply</button>
+
+                <!-- Lưu hội thoại -->
+                <button id="openSavePanelSidebar"><i class="bi bi-floppy" style="color: rgb(0, 17, 255);"></i> Save Conversation</button>
+
+                <!-- Reset toàn bộ cuộc hội thoại hiện tại -->
+                <button id="resetBtn"><i class="bi bi-arrow-counterclockwise" style="color: rgb(0, 163, 0);"></i> Reset</button>
             </div>
 
         </div>
     </main>
 
+    <!-- FOOTER: trạng thái & thông tin nhóm -->
     <footer class="main-footer">
         <div class="footer-title">&copy; Nhập môn công nghệ phần mềm HKI 2025-2026</div>
+
+        <!-- ID="status" dùng để cập nhật trạng thái hệ thống -->
         <div class="footer-team" id="status">
             Team Members: <br>
             <span>Huỳnh Thị Thảo Duyên (24880014)</span>
@@ -65,14 +80,13 @@
             <span> &#8900; Trần Văn Tiết (24880060)</span>
             <span> &#8900; Huỳnh Hữu Vinh (24880076)</span>
         </div>
-
-        <!-- Thẻ này giúp hiển thị trạng thái kết nối hoặc thông tin khác (Không được bỏ) -->
     </footer>
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR: menu chính -->
     <aside id="slideSidebar" class="slide-sidebar" aria-hidden="true">
         <div class="sidebar-inner">
 
+            <!-- Header sidebar: avatar + thông tin tài khoản -->
             <div class="sidebar-header">
                 <img id="appLogo" src="/images/logo.png"
                     style="width:56px;height:56px;border-radius:8px;object-fit:cover;"
@@ -85,27 +99,34 @@
                 </div>
             </div>
 
+            <!-- Login / Logout -->
             <div style="margin-top:12px;display:flex;gap:8px;">
                 <button id="loginBtnSidebar" class="small">Login</button>
+
                 <button id="logoutBtnSidebar" class="small"
                     style="display:none;background:#fff;color:#b21f2d;border:1px solid #ffdede;">Logout</button>
             </div>
 
             <hr style="margin:15px 0;border:none;border-top:1px solid #eee;" />
 
+            <!-- USER MENU -->
             <div style="display:flex;flex-direction:column;gap:8px;">
-                <!-- USER MENU (mặc định) -->
                 <div id="userMenu" style="display:flex;flex-direction:column;gap:8px;">
+
+                    <!-- Mở danh sách hội thoại đã lưu -->
                     <button id="openSavedListSidebar"><i class="bi bi-folder2-open"></i> View Saved</button>
+
+                    <!-- Mở popup cài đặt giọng đọc -->
                     <button id="settingsBtnSidebar"><i class="bi bi-gear"></i> Settings</button>
 
-                    <!-- NÚT DÀNH CHO ADMIN -->
+                    <!-- Xuất hiện nếu role = admin / superadmin -->
                     <button id="gotoAdminBtn" style="display:none; color: #b21f2d;">
                         <i class="bi bi-shield-lock"></i> Admin Panel
                     </button>
                 </div>
             </div>
 
+            <!-- Nút đóng sidebar -->
             <button id="closeSidebar" type="button"
                 style="position:absolute;top:10px;right:10px;background:transparent;border:none;font-size:20px;cursor:pointer;">
                 ✖
@@ -114,30 +135,32 @@
         </div>
     </aside>
 
+    <!-- Overlay đen mờ -->
     <div id="sidebarOverlay" class="sidebar-overlay" style="display:none;"></div>
 
-    <!-- AUTH POPUP -->
+    <!-- POPUP LOGIN / REGISTER -->
     <div id="authModal" class="auth-modal" style="display:none;">
         <div class="auth-panel">
             <button id="authCloseBtn" class="auth-close">✖</button>
 
+            <!-- Tabs login/register -->
             <div class="auth-tabs">
                 <button id="authTabLogin" class="auth-tab active">Đăng nhập</button>
                 <button id="authTabRegister" class="auth-tab">Đăng ký</button>
             </div>
 
-            <!-- LOGIN -->
+            <!-- Form LOGIN -->
             <form id="authLoginForm" class="auth-form">
-                <label>
-                    <p style="font-weight: bold; font-size: 1;">Email:</p>
+                <label>Email:
                     <input type="email" id="loginEmail" placeholder="you@example.com" required>
                 </label>
 
-                <label>
-                    <p style="font-weight: bold; font-size: 1;">Mật khẩu:</p>
-                    <input type="password" id="loginPassword" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
-                        oninvalid="this.setCustomValidity('Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số')"
-                        oninput="this.setCustomValidity('')" placeholder="********" required>
+                <label>Mật khẩu:
+                    <input type="password" id="loginPassword"
+                        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+                        oninvalid="this.setCustomValidity('Mật khẩu phải gồm chữ hoa, chữ thường và số, tối thiểu 8 ký tự')"
+                        oninput="this.setCustomValidity('')"
+                        required>
                 </label>
 
                 <button type="submit" class="auth-btn login-btn">Đăng nhập</button>
@@ -148,26 +171,22 @@
                 </div>
             </form>
 
-            <!-- REGISTER -->
+            <!-- Form REGISTER -->
             <form id="authRegisterForm" class="auth-form" style="display:none;">
-                <label>
-                    <p style="font-weight: bold; font-size: 1;">Tên hiển thị: <span style="color:red;">(*)</span></p>
-                    <input type="text" id="regName" placeholder="Nguyen Van A" pattern="^[A-Za-zÀ-ỹ\s]{2,50}$"
-                        oninvalid="this.setCustomValidity('Tên chỉ được chứa chữ cái và khoảng trắng (tối thiểu 2 ký tự)')"
-                        oninput="this.setCustomValidity('')" required>
+                <label>Tên hiển thị:
+                    <input type="text" id="regName"
+                        pattern="^[A-Za-zÀ-ỹ\s]{2,50}$"
+                        placeholder="Nguyen Van A" required>
                 </label>
 
-                <label>
-                    <p style="font-weight: bold; font-size: 1;">Email: <span style="color:red;">(*)</span></p>
-                    <input type="email" id="regEmail" placeholder="abc@gmail.com" required>
+                <label>Email:
+                    <input type="email" id="regEmail" required>
                 </label>
 
-                <label>
-                    <p style="font-weight: bold; font-size: 1;">password: <span style="color:red;">(*)</span></p>
-                    <input type="password" id="regPassword" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
-                        placeholder="********"
-                        oninvalid="this.setCustomValidity('Mật khẩu phải có ít nhất 8 ký tự, gồm chữ hoa, chữ thường và số')"
-                        oninput="this.setCustomValidity('')" required>
+                <label>Mật khẩu:
+                    <input type="password" id="regPassword"
+                        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+                        required>
                 </label>
 
                 <button type="submit" class="auth-btn register-btn">Tạo tài khoản</button>
@@ -177,12 +196,11 @@
                     <span id="switchToLogin" style="color:#2f6ce5;cursor:pointer;">Đăng nhập</span>
                 </div>
             </form>
-
         </div>
     </div>
 
 
-    <!-- SETTINGS POPUP -->
+    <!-- POPUP SETTINGS -->
     <div id="settingsModal" class="auth-modal" style="display:none;">
         <div class="auth-backdrop" id="settingsBackdrop"></div>
         <div class="auth-panel">
@@ -192,10 +210,8 @@
             <h2 style="margin-top:0; color:#00b4ff;"><i class="bi bi-gear-fill"></i> Settings</h2>
 
             <div class="settings-wrapper">
-
-                <!-- Speech Speed -->
-                <label>
-                    Speech Speed:
+                <!-- Tốc độ nói -->
+                <label>Speech Speed:
                     <select id="speechRate" class="setting-select">
                         <option value="0.8">Slow</option>
                         <option value="1.0">Normal</option>
@@ -204,47 +220,35 @@
                     </select>
                 </label>
 
-                <!-- Voice -->
-                <label>
-                    Voice:
+                <!-- Chọn voice -->
+                <label>Voice:
                     <div style="display:flex; gap:10px; align-items:center; margin-top:6px;">
                         <select id="voiceSelect" class="setting-select" style="flex:1;"></select>
-
-                        <!-- Nút test voice -->
                         <button id="testVoiceBtn" class="voice-test-btn">🔊</button>
                     </div>
                 </label>
 
                 <button id="settingsSave" class="auth-btn">Save Settings</button>
             </div>
-
         </div>
-
     </div>
 
-
-
-
+    <!-- Load scripts cho toàn app -->
     <script src="./js/helpers.js"></script>
     <script src="./js/status.js"></script>
     <script src="./js/scroll.js"></script>
-
     <script src="./js/auth.js"></script>
     <script src="./js/save.js"></script>
-
     <script src="./js/dictionary.js"></script>
     <script src="./js/popup.js"></script>
-
     <script src="./js/chat.js"></script>
     <script src="./js/translate.js"></script>
-
     <script src="./js/textToSpeak.js"></script>
     <script src="./js/speakToText.js"></script>
-
     <script src="./js/settings.js"></script>
     <script src="./js/main.js"></script>
 
-
 </body>
+
 
 </html>

@@ -1,7 +1,18 @@
-// ============================
+// ============================================================================
 // SAVE / LOAD / DELETE / RENAME via MongoDB
-// ============================
+// Bộ hàm xử lý thao tác CRUD cho hội thoại:
+// - fetchSavedList(): lấy danh sách hội thoại
+// - loadConversationDB(): tải hội thoại và render vào UI
+// - deleteConversationDB(): xóa hội thoại
+// - renameConversationDB(): đổi tên hội thoại
+// - showSavedListModal(): modal danh sách hội thoại đã lưu
+// - saveFullConversationToDB(): lưu toàn bộ hội thoại hiện tại
+// ============================================================================
 
+
+// ============================================================================
+// Lấy danh sách hội thoại từ DB cho người dùng hiện tại
+// ============================================================================
 async function fetchSavedList() {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -15,12 +26,15 @@ async function fetchSavedList() {
         }
     });
 
-    return await res.json(); // trả ra: [{ _id, title, createdAt, messages: [...] }]
+    // Trả về mảng: [{ _id, title, createdAt, messages: [...] }]
+    return await res.json();
 }
 
-// ============================
-// LOAD conversation from DB
-// ============================
+
+// ============================================================================
+// LOAD conversation từ DB và đổ vào UI chat
+// ============================================================================
+
 async function loadConversationDB(conversationId) {
     const token = localStorage.getItem("token");
     if (!token) return alert("Bạn chưa đăng nhập!");
@@ -33,16 +47,19 @@ async function loadConversationDB(conversationId) {
 
     const conv = await res.json();
 
-    // clear UI
+    // Xóa giao diện chat & reset history local
     messages.innerHTML = "";
     conversationHistory = [];
 
+    // Ghi lại ID vào localStorage
     localStorage.setItem("conversationId", conversationId);
     window.conversationId = conversationId;
 
+    // Render từng message
     conv.messages.forEach((m) => {
 
-        const text = m.text || m.content || "";   // <--- FIX QUAN TRỌNG
+        // Mỗi message có thể có field text hoặc content → chuẩn hóa
+        const text = m.text || m.content || "";   // FIX GIỮ ĐÚNG DỮ LIỆU
 
         if (!text) return;
 
@@ -55,13 +72,13 @@ async function loadConversationDB(conversationId) {
         }
     });
 
-
     smartScroll();
 }
 
-// ============================
-// DELETE a conversation (DB)
-// ============================
+
+// ============================================================================
+// XÓA 1 CUỘC HỘI THOẠI TRONG DB
+// ============================================================================
 async function deleteConversationDB(id) {
     const token = localStorage.getItem("token");
     if (!token) return alert("Bạn chưa đăng nhập!");
@@ -74,6 +91,7 @@ async function deleteConversationDB(id) {
     });
 
     const data = await res.json();
+
     if (data.success) {
         alert("Đã xóa cuộc hội thoại.");
     } else {
@@ -81,9 +99,10 @@ async function deleteConversationDB(id) {
     }
 }
 
-// ============================
-// RENAME conversation (DB)
-// ============================
+
+// ============================================================================
+// ĐỔI TÊN CUỘC HỘI THOẠI TRONG DB
+// ============================================================================
 async function renameConversationDB(id, newTitle) {
     const token = localStorage.getItem("token");
     if (!token) return null;
@@ -102,22 +121,22 @@ async function renameConversationDB(id, newTitle) {
 
     const data = await res.json();
 
-    // ⛔ LỖI → trả null, không trả undefined
+    // Nếu lỗi → trả null
     if (!data || data.error || !data.success) {
         alert("❌ Đổi tên thất bại: " + (data?.error || "Unknown error"));
         return null;
     }
 
     console.log("✔ Đã đổi tên trong DB:", data.title);
-    return data.title;   // luôn có giá trị hợp lệ
+    return data.title;
 }
 
 
-
-// ============================
-// UI MODAL LIST (Mongo version)
-// ============================
+// ============================================================================
+// HIỂN THỊ MODAL DANH SÁCH HỘI THOẠI ĐÃ LƯU
+// ============================================================================
 async function showSavedListModal() {
+
     const list = await fetchSavedList(); // lấy từ DB
 
     const modal = document.createElement("div");
@@ -130,33 +149,41 @@ async function showSavedListModal() {
     const panel = document.createElement("div");
     panel.className = "modal-panel";
 
+    // Tiêu đề modal
     const h2 = document.createElement("h2");
     h2.innerHTML = `<i class="bi bi-bookmark-star" style="margin-right:6px;"></i> Saved Conversations`;
     h2.style.color = "var(--accent3)";
     panel.appendChild(h2);
 
+    // Danh sách hội thoại
     const container = document.createElement("div");
     container.style.maxHeight = "360px";
     container.style.overflowY = "auto";
 
     if (!list.length) {
         container.innerHTML = "<div>Không có cuộc hội thoại nào.</div>";
+
     } else {
+
         list.forEach((item) => {
+
             const row = document.createElement("div");
             row.style.padding = "10px 0";
             row.style.marginBottom = "12px";
             row.style.borderBottom = "1px solid #eee";
 
+            // Tiêu đề hội thoại
             const title = document.createElement("div");
             title.textContent = item.title || "Untitled";
             title.style.fontWeight = "700";
             title.style.marginBottom = "6px";
             row.appendChild(title);
 
+            // Nhóm nút VIEW / RENAME / DELETE
             const actions = document.createElement("div");
             actions.style.display = "flex";
             actions.style.gap = "10px";
+
 
             // VIEW
             const btnView = document.createElement("button");
@@ -167,6 +194,7 @@ async function showSavedListModal() {
                 document.body.removeChild(modal);
             };
 
+
             // RENAME
             const btnRename = document.createElement("button");
             btnRename.className = "btn-rename";
@@ -176,10 +204,12 @@ async function showSavedListModal() {
                 if (newName) {
                     const finalName = await renameConversationDB(item._id, newName.trim());
                     if (finalName) alert("Đổi tên thành: " + finalName);
+
                     document.body.removeChild(modal);
-                    showSavedListModal();
+                    showSavedListModal(); // load lại danh sách
                 }
             };
+
 
             // DELETE
             const btnDelete = document.createElement("button");
@@ -187,9 +217,11 @@ async function showSavedListModal() {
             btnDelete.textContent = "Delete";
             btnDelete.onclick = async () => {
                 if (!confirm("Chắc chắn xóa?")) return;
+
                 await deleteConversationDB(item._id);
+
                 document.body.removeChild(modal);
-                showSavedListModal();
+                showSavedListModal(); // load lại danh sách
             };
 
 
@@ -204,6 +236,7 @@ async function showSavedListModal() {
 
     panel.appendChild(container);
 
+    // Nút đóng modal
     const closeBtn = document.createElement("button");
     closeBtn.textContent = "Close";
     closeBtn.onclick = () => document.body.removeChild(modal);
@@ -214,8 +247,9 @@ async function showSavedListModal() {
 }
 
 
-// SAVE FULL CONVERSATION TO MONGODB
-// ============================
+// ============================================================================
+// LƯU TOÀN BỘ HỘI THOẠI HIỆN TẠI VÀO DB
+// ============================================================================
 async function saveFullConversationToDB() {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -231,6 +265,7 @@ async function saveFullConversationToDB() {
     let title = prompt("Đặt tên cuộc hội thoại:");
     if (!title) return;
 
+    // Chuẩn hóa format messages gửi lên server
     const formattedMessages = conversationHistory.map(m => ({
         role: m.role,
         text: m.content || m.text || "",
@@ -258,6 +293,4 @@ async function saveFullConversationToDB() {
 
     alert(`✔ Đã lưu với tên: ${data.title}`);
     localStorage.setItem("conversationId", data.conversationId);
-
 }
-

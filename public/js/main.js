@@ -1,13 +1,17 @@
 console.log("main.js starting...");
 
-
-
-
 (function () {
+
+    // ==========================================================
+    // Khởi tạo sau khi DOM load hoàn toàn
+    // ==========================================================
     document.addEventListener("DOMContentLoaded", () => {
         initMenuToggle();
     });
 
+    // ==========================================================
+    // Hàm mở sidebar bằng nút menu chính trên header
+    // ==========================================================
     function initMenuToggle() {
         const el = document.getElementById("menuToggle");
         const slide = document.getElementById("slideSidebar");
@@ -22,6 +26,10 @@ console.log("main.js starting...");
         };
     }
 
+    // ==========================================================
+    // Render badge role theo vai trò của user
+    // (superadmin / admin / user)
+    // ==========================================================
     function renderRoleBadge(role) {
         if (role === "superadmin") {
             return `<span class="role-badge role-superadmin"><i class="bi bi-star-fill"></i> SUPERADMIN</span>`;
@@ -32,17 +40,19 @@ console.log("main.js starting...");
         return `<span class="role-badge role-user"><i class="bi bi-person"></i> USER</span>`;
     }
 
+    // Lấy thông tin người dùng hiện tại từ localStorage
     const p = JSON.parse(localStorage.getItem("profile") || "{}");
 
+    // Hiển thị role dạng text (không dùng badge ở file này)
     const roleBox = document.getElementById("sbProfileRole");
-
     if (roleBox && p.role) {
         roleBox.innerHTML = p.role.toUpperCase();
     }
 
-    // ============================================
-    // SAFE WRAPPER
-    // ============================================
+    // ==========================================================
+    // SAFE WRAPPER: chạy handler nếu element tồn tại
+    // Giúp giảm crash do querySelector trả về null
+    // ==========================================================
     function safe(id, fn) {
         const el = document.getElementById(id);
         if (!el) {
@@ -53,9 +63,9 @@ console.log("main.js starting...");
         catch (err) { console.error("Handler error for", id, err); }
     }
 
-    // ============================================
-    // AUTH POPUP EVENTS
-    // ============================================
+    // ==========================================================
+    // AUTH POPUP (LOGIN/REGISTER)
+    // ==========================================================
     safe("loginBtnSidebar", (el) => {
         el.onclick = () => {
             const m = document.getElementById("authModal");
@@ -70,14 +80,17 @@ console.log("main.js starting...");
         };
     });
 
-    // ============================================
-    // SETTINGS POPUP
-    // ============================================
+    // ==========================================================
+    // SETTINGS POPUP (Cấu hình ứng dụng)
+    // ==========================================================
     safe("settingsBtnSidebar", (el) => {
         el.onclick = () => {
             const modal = document.getElementById("settingsModal");
             if (!modal) return;
+
+            // Load lại cấu hình khi mở popup (nếu có)
             try { if (typeof loadSettings === "function") loadSettings(); } catch { }
+
             modal.style.display = "flex";
         };
     });
@@ -96,9 +109,9 @@ console.log("main.js starting...");
         };
     });
 
-    // ============================================
-    // DELETE CHAT
-    // ============================================
+    // ==========================================================
+    // XÓA TOÀN BỘ CHAT TRONG MÀN HÌNH
+    // ==========================================================
     safe("deleteBtnSidebar", (el) => {
         el.onclick = () => {
             if (confirm("Bạn muốn xóa hết nội dung chat trên màn hình?")) {
@@ -111,9 +124,9 @@ console.log("main.js starting...");
         };
     });
 
-    // ============================================
-    // SIDEBAR TOGGLE
-    // ============================================
+    // ==========================================================
+    // SIDEBAR OPEN/CLOSE (TOGGLE)
+    // ==========================================================
     safe("menuToggle", (el) => {
         const slide = document.getElementById("slideSidebar");
         const overlay = document.getElementById("sidebarOverlay");
@@ -147,6 +160,7 @@ console.log("main.js starting...");
         };
     });
 
+    // Nút mở danh sách hội thoại đã lưu
     safe("openSavedListSidebar", (el) => {
         el.onclick = () => {
             try { showSavedListModal(); }
@@ -154,6 +168,7 @@ console.log("main.js starting...");
         };
     });
 
+    // Bản duplicate của handler trên (giữ nguyên theo file gốc)
     safe("openSavedListSidebar", (el) => {
         el.onclick = () => {
             try { showSavedListModal(); }
@@ -161,6 +176,7 @@ console.log("main.js starting...");
         };
     });
 
+    // Nút reset cuộc hội thoại hiện tại
     safe("resetBtn", (el) => {
         el.onclick = () => {
             try { resetConversation(); }
@@ -168,9 +184,9 @@ console.log("main.js starting...");
         };
     });
 
-    // ============================
-    // ⭐ SAVE CONVERSATION BUTTON
-    // ============================
+    // ==========================================================
+    // SAVE FULL CONVERSATION TO DB (phần lưu hội thoại)
+    // ==========================================================
     safe("openSavePanelSidebar", (el) => {
         el.onclick = () => {
             try {
@@ -181,17 +197,15 @@ console.log("main.js starting...");
         };
     });
 
-
-
-    // ============================================
-    // LOAD SETTINGS + VOICES SAFELY
-    // ============================================
+    // ==========================================================
+    // LOAD SETTINGS + VOICES AN TOÀN (TRÁNH ERROR)
+    // ==========================================================
     try { if (typeof loadVoices === "function") loadVoices(); } catch { }
     try { if (typeof loadSettings === "function") loadSettings(); } catch { }
 
-    // ============================================
-    // ⭐⭐ ADMIN PANEL BUTTON ⭐⭐
-    // ============================================
+    // ==========================================================
+    // ADMIN PANEL – NÚT CHUYỂN ĐẾN admin.html
+    // ==========================================================
     safe("gotoAdminBtn", (el) => {
         el.onclick = () => {
             console.log("Going to admin.html...");
@@ -199,9 +213,9 @@ console.log("main.js starting...");
         };
     });
 
-    // ============================================
-    // ⭐⭐ SHOW/HIDE ADMIN BUTTON ⭐⭐
-    // ============================================
+    // ==========================================================
+    // Ẩn/hiện nút Admin tùy theo role người dùng
+    // ==========================================================
     function updateSidebarMenu() {
         const profile = JSON.parse(localStorage.getItem("profile") || "{}");
         const isAdmin = profile.role === "admin" || profile.role === "superadmin";

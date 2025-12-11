@@ -1,5 +1,12 @@
 // auth.js — REAL LOGIN WITH BACKEND
+// =====================================================================
+// Module xử lý đăng nhập, đăng ký và đăng xuất bằng backend API.
+// Bao gồm điều khiển UI modal, quản lý token, và cập nhật thông tin
+// người dùng lên sidebar.
+// =====================================================================
+
 (function () {
+    // Các phần tử UI liên quan đến authentication modal
     const authModal = document.getElementById("authModal");
     const authCloseBtn = document.getElementById("authCloseBtn");
     const tabLogin = document.getElementById("authTabLogin");
@@ -7,13 +14,18 @@
     const loginForm = document.getElementById("authLoginForm");
     const registerForm = document.getElementById("authRegisterForm");
 
+    // Nút login / logout ở sidebar
     const loginBtn = document.getElementById("loginBtnSidebar");
     const logoutBtn = document.getElementById("logoutBtnSidebar");
 
+    // Hiển thị tên và email người dùng trên sidebar
     const sbName = document.getElementById("sbProfileName");
     const sbEmail = document.getElementById("sbProfileEmail");
 
-    // ========== UI TABS ==========
+    // ===============================================================
+    // UI TAB CONTROL – chuyển đổi giữa Login và Register
+    // ===============================================================
+
     function showLogin() {
         tabLogin.classList.add("active");
         tabRegister.classList.remove("active");
@@ -28,21 +40,23 @@
         registerForm.style.display = "flex";
     }
 
+    // Gán sự kiện cho nút chuyển tab
     tabLogin.onclick = showLogin;
     tabRegister.onclick = showRegister;
 
     document.getElementById("switchToRegister").onclick = showRegister;
     document.getElementById("switchToLogin").onclick = showLogin;
 
-    // Open modal
+    // Mở modal Login/Register
     loginBtn.onclick = () => authModal.style.display = "flex";
 
-    // Close modal
+    // Đóng modal
     authCloseBtn.onclick = () => authModal.style.display = "none";
 
-    // ========================
-    // 🔥 REAL LOGIN
-    // ========================
+
+    // ===============================================================
+    // LOGIN – xử lý đăng nhập backend
+    // ===============================================================
     loginForm.onsubmit = async (e) => {
         e.preventDefault();
 
@@ -63,12 +77,12 @@
                 return;
             }
 
-            // Save token
+            // Lưu token + profile vào localStorage
             localStorage.setItem("token", data.token);
             localStorage.setItem("profile", JSON.stringify(data.user));
-            localStorage.removeItem("conversationId");
+            localStorage.removeItem("conversationId"); // reset cuộc hội thoại
 
-            // Update sidebar
+            // Cập nhật UI sidebar
             sbName.textContent = data.user.name;
             sbEmail.textContent = data.user.email;
 
@@ -77,17 +91,19 @@
 
             alert("Đăng nhập thành công!");
             authModal.style.display = "none";
-            location.reload();
 
+            // Reload lại trang để cập nhật trạng thái đăng nhập
+            location.reload();
 
         } catch (err) {
             alert("Server error.");
         }
     };
 
-    // ========================
-    // 🔥 REAL REGISTER
-    // ========================
+
+    // ===============================================================
+    // REGISTER – tạo tài khoản mới qua backend
+    // ===============================================================
     registerForm.onsubmit = async (e) => {
         e.preventDefault();
 
@@ -109,9 +125,11 @@
                 return;
             }
 
+            // Lưu token + profile vào localStorage
             localStorage.setItem("token", data.token);
             localStorage.setItem("profile", JSON.stringify(data.user));
 
+            // Cập nhật sidebar
             sbName.textContent = data.user.name;
             sbEmail.textContent = data.user.email;
 
@@ -120,15 +138,19 @@
 
             alert("Đăng ký thành công!");
             authModal.style.display = "none";
+
+            // Reload giao diện
             location.reload();
+
         } catch (err) {
             alert("Server error.");
         }
     };
 
-    // ========================
-    // 🔥 LOGOUT
-    // ========================
+
+    // ===============================================================
+    // LOGOUT – xóa token + profile và reset UI
+    // ===============================================================
     logoutBtn.onclick = () => {
         localStorage.removeItem("token");
         localStorage.removeItem("profile");
@@ -141,19 +163,23 @@
 
         alert("Đã đăng xuất!");
 
+        // Reload để cập nhật UI ngay lập tức
         location.reload();
     };
 
-    // ========================
-    // 🔥 LOAD saved login (if any)
-    // ========================
+
+    // ===============================================================
+    // LOAD saved login – tự động khôi phục trạng thái đăng nhập
+    // ===============================================================
     try {
         const user = JSON.parse(localStorage.getItem("profile") || "null");
         if (user) {
             sbName.textContent = user.name;
             sbEmail.textContent = user.email;
+
             loginBtn.style.display = "none";
             logoutBtn.style.display = "inline-block";
         }
     } catch { }
+
 })();
