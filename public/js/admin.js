@@ -230,7 +230,11 @@ async function loadUserConversations(userId) {
     });
 
     const data = await res.json();
-    container.innerHTML = "";
+
+    // ⭐ cập nhật số lượng user
+    document.getElementById("statUsers").innerHTML =
+        `<i class="bi bi-people"></i> Users: ${users.length}`;
+
 
     // ⭐ Sort theo title A → Z
     data.list.sort((a, b) => a.title.localeCompare(b.title));
@@ -359,6 +363,10 @@ async function loadAllConversations() {
 
     const data = await res.json();
     container.innerHTML = "";
+    // ⭐ cập nhật số lượng conversation
+    document.getElementById("statConvs").innerHTML =
+        `<i class="bi bi-chat-dots"></i> Conversations: ${data.list.length}`;
+
 
     // ⭐ Sort theo title A → Z
     data.list.sort((a, b) => a.title.localeCompare(b.title));
