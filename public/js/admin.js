@@ -46,7 +46,10 @@ async function loadUsers() {
     });
 
     const users = await res.json();
-    container.innerHTML = "";
+
+    document.getElementById("statUsers").innerHTML =
+        `<i class="bi bi-people"></i> Users: ${users.length}`;
+
 
     // ⭐ SẮP XẾP THEO THỨ TỰ: superadmin → admin → user
     const roleOrder = { superadmin: 1, admin: 2, user: 3 };
@@ -230,10 +233,10 @@ async function loadUserConversations(userId) {
     });
 
     const data = await res.json();
+    container.innerHTML = "";
+    document.getElementById("statConvs").innerHTML =
+        `<i class="bi bi-chat-dots"></i> Conversations: ${data.list.length}`;
 
-    // ⭐ cập nhật số lượng user
-    document.getElementById("statUsers").innerHTML =
-        `<i class="bi bi-people"></i> Users: ${users.length}`;
 
 
     // ⭐ Sort theo title A → Z
@@ -366,6 +369,7 @@ async function loadAllConversations() {
     // ⭐ cập nhật số lượng conversation
     document.getElementById("statConvs").innerHTML =
         `<i class="bi bi-chat-dots"></i> Conversations: ${data.list.length}`;
+
 
 
     // ⭐ Sort theo title A → Z
