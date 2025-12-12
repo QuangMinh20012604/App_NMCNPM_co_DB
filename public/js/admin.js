@@ -48,6 +48,11 @@ async function loadUsers() {
     });
 
     const users = await res.json();
+    container.innerHTML = "";
+
+    // Cập nhật thống kê số lượng conversation
+    document.getElementById("statConvs").innerHTML =
+        `<i class="bi bi-chat-dots"></i> Conversations: ${data.list.length}`;
 
     // Hiển thị số lượng người dùng
     document.getElementById("statUsers").innerHTML =
@@ -390,7 +395,11 @@ async function loadAllConversations() {
     const data = await res.json();
     container.innerHTML = "";
 
-    // Hiển thị số lượng hội thoại
+    // Cập nhật thống kê số lượng users
+    document.getElementById("statUsers").innerHTML =
+        `<i class="bi bi-people"></i> Users: ${users.length}`;
+
+    // Cập nhật thống kê số lượng conversation
     document.getElementById("statConvs").innerHTML =
         `<i class="bi bi-chat-dots"></i> Conversations: ${data.list.length}`;
 
