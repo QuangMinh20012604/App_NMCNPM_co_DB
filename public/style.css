@@ -302,7 +302,7 @@ button {
 
     max-width: 360px;
     width: 340px;
-    max-height: 420px;          /* ⭐ GIỚI HẠN CHIỀU CAO */
+    max-height: 420px;         
 
     border-left: 5px solid var(--accent);
     font-size: 17px;
@@ -311,9 +311,9 @@ button {
     z-index: 1200;
     animation: fadeIn 0.15s ease-in-out;
 
-    display: flex;              /* ⭐ QUAN TRỌNG */
+    display: flex;             
     flex-direction: column;
-    overflow: hidden;           /* ⭐ KHÓA TRÀN */
+    overflow: hidden;          
 }
 
 
@@ -328,15 +328,15 @@ button {
     border-bottom: 1px solid #eee;
     background: #fafafa;
 
-    position: sticky;   /* ⭐ HEADER LUÔN HIỆN */
+    position: sticky;  
     top: 0;
     z-index: 2;
 }
 
 .dict-body {
     padding: 12px 16px;
-    overflow-y: auto;           /* ⭐ BẬT SCROLL */
-    flex: 1;                    /* ⭐ CHIẾM PHẦN CÒN LẠI */
+    overflow-y: auto;     
+    flex: 1;         
     font-size: 14px;
     line-height: 1.5;
 }
