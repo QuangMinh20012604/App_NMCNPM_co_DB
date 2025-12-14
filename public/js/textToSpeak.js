@@ -44,8 +44,15 @@ function speakAI() {
     if (chosen) utter.voice = chosen;
   }
 
+  // TẮT MICRO KHI BOT BẮT ĐẦU NÓI
+  if (recognition && isListening) {
+    manualStop = true;   // báo là stop có chủ đích
+    recognition.stop();  // tắt mic NGAY
+  }
+
   // Bắt đầu đọc
   speechSynthesis.speak(utter);
+
 
   // Khi đọc xong, nếu Auto Mode bật → bật lại microphone
   utter.onend = () => {

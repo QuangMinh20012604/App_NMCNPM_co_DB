@@ -71,7 +71,7 @@ if (recognition) {
   recognition.onresult = (e) => {
     const result = e.results[e.results.length - 1];
 
-    // ❗ CHỈ xử lý khi Chrome xác nhận user nói xong
+    // CHỈ xử lý khi Chrome xác nhận user nói xong
     if (!result.isFinal) return;
 
     const transcript = result[0].transcript.trim();
