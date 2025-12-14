@@ -1,54 +1,76 @@
 // ============================================================================
-// listenBtn.onclick → Khi người dùng nhấn nút "Listen"
-// Hành động: gọi hàm speakAI() để đọc tin nhắn AI cuối cùng.
+// Text-to-Speech (Web Speech API)
+// Đọc lại câu trả lời của AI và phối hợp an toàn với Speech-to-Text
 // ============================================================================
-listenBtn.onclick = speakAI;
 
+// Nút "Listen Reply"
+listenBtn.onclick = speakAI;
 
 // ============================================================================
 // speakAI()
-// Đọc to nội dung tiếng Anh của tin nhắn AI cuối cùng trong khung chat.
-//
-// Quy trình:
-// 1. Lấy tin nhắn AI cuối cùng (.msg.ai)
-// 2. Trích phần tiếng Anh (.ai-english)
-// 3. Lấy cấu hình giọng đọc từ localStorage (aiSettings)
-// 4. Tạo SpeechSynthesisUtterance và phát âm
-// 5. Sau khi đọc xong → nếu Auto Mode đang bật, tự khởi động microphone
+// Đọc to nội dung tiếng Anh của tin nhắn AI cuối cùng
 // ============================================================================
 function speakAI() {
 
-  // Lấy tin nhắn AI gần nhất
+  // Lấy tin nhắn AI mới nhất
   const lastAI = [...document.querySelectorAll(".msg.ai")].pop();
   if (!lastAI) return;
 
-  // Lấy phần nội dung tiếng Anh trong tin AI
+  // Lấy phần tiếng Anh
   const engPart = lastAI.querySelector(".ai-english");
   if (!engPart) return;
 
-  // Lấy text tiếng Anh đã tách từ dictionary
   const text = engPart.textContent.trim();
+  if (!text) return;
 
-  // Lấy cấu hình user đã lưu (voice + rate)
+  // ==========================================================
+  // TẮT MICRO TRƯỚC KHI AI NÓI (CHỐNG LOOP)
+  // ==========================================================
+  if (window.recognition && window.isListening) {
+    window.manualStop = true;   // báo là stop có chủ đích
+    recognition.stop();
+  }
+
+  // ==========================================================
+  // LẤY SETTINGS GIỌNG ĐỌC
+  // ==========================================================
   const settings = JSON.parse(localStorage.getItem("aiSettings") || "{}");
 
-  // Chuẩn bị đối tượng đọc văn bản
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = "en-US";
-  utter.rate = parseFloat(settings.rate || "1.0"); // tốc độ nói
+  utter.rate = parseFloat(settings.rate || "1.0");
 
-  // Nếu user chọn voice cụ thể → áp dụng giọng đó
-  if (settings.voice !== "") {
+  // Chọn voice nếu có
+  if (settings.voice) {
     const voices = speechSynthesis.getVoices();
-    const chosen = voices.find((v) => v.name === settings.voice);
+    const chosen = voices.find(v => v.name === settings.voice);
     if (chosen) utter.voice = chosen;
   }
 
-  // Bắt đầu đọc
-  speechSynthesis.speak(utter);
-
-  // Khi đọc xong, nếu Auto Mode bật → bật lại microphone
+  // ==========================================================
+  // KHI AI NÓI XONG
+  // ==========================================================
   utter.onend = () => {
-    if (autoMode.checked && recognition) recognition.start();
+
+    // Reset trạng thái stop
+    window.manualStop = false;
+
+    // Chỉ bật lại mic khi Auto Mode bật
+    if (
+      autoMode &&
+      autoMode.checked &&
+      window.recognition
+    ) {
+      // Delay nhỏ để tránh Chrome bug
+      setTimeout(() => {
+        recognition.start();
+      }, 300);
+    }
   };
+
+  // ==========================================================
+  // BẮT ĐẦU ĐỌC
+  // ==========================================================
+  speechSynthesis.cancel(); // đảm bảo không chồng âm
+  speechSynthesis.speak(utter);
 }

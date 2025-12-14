@@ -1,55 +1,48 @@
 // ============================================================================
 // Speech-to-Text (Web Speech API)
-// Module điều khiển microphone: start/stop, auto mode, timeout im lặng.
+// Quản lý microphone: start / stop / auto mode / tránh loop STT <-> TTS
 // ============================================================================
 
-// recognition: đối tượng Web Speech API (chỉ có trên Chrome-based)
+// Khởi tạo SpeechRecognition (Chrome-based)
 let recognition =
   window.webkitSpeechRecognition ? new webkitSpeechRecognition() : null;
 
-// Trạng thái microphone hiện tại
+// Trạng thái microphone
 let isListening = false;
 
-// Bộ đếm thời gian im lặng (timeout)
+// Timer phát hiện im lặng
 let silenceTimer = null;
 
-// manualStop = true nếu người dùng tự bấm stop
-// Dùng để phân biệt với stop do timeout im lặng
+// manualStop = true khi user hoặc hệ thống CHỦ ĐỘNG stop mic
+// Dùng để phân biệt với stop do timeout
 let manualStop = false;
 
 if (recognition) {
 
-  // ============================================================
-  // Cấu hình cơ bản cho Speech Recognition
-  // ============================================================
-  recognition.lang = "en-US";          // Ngôn ngữ nhận dạng
-  recognition.interimResults = true;   // Lấy kết quả tạm thời
+  // ==========================================================================
+  // CẤU HÌNH SPEECH RECOGNITION
+  // ==========================================================================
+  recognition.lang = "en-US";
+  recognition.interimResults = true;
 
-  // ============================================================
-  // Khi microphone bắt đầu nhận giọng
-  // ============================================================
+  // ==========================================================================
+  // MIC START
+  // ==========================================================================
   recognition.onstart = () => {
     isListening = true;
 
-    // Đổi màu nút → báo trạng thái đang nghe
     speakBtn.classList.add("listening");
-
-    // Cập nhật trạng thái UI
     setStatus("listening");
 
-    // Đổi icon microphone
     document.getElementById("micIcon").className = "bi bi-mic-fill";
 
-    // Reset trạng thái stop thủ công
     manualStop = false;
-
-    // Khởi động lại timer im lặng
     resetSilenceTimer();
   };
 
-  // ============================================================
-  // Khi microphone dừng
-  // ============================================================
+  // ==========================================================================
+  // MIC STOP
+  // ==========================================================================
   recognition.onend = () => {
     isListening = false;
 
@@ -59,55 +52,73 @@ if (recognition) {
 
     clearTimeout(silenceTimer);
 
-    // Nếu KHÔNG phải user tự stop → cho phép auto restart
-    if (!manualStop && autoMode && autoMode.checked) {
+    // ❗ CHỈ auto restart khi:
+    // - Không phải stop thủ công
+    // - Auto Mode bật
+    // - AI KHÔNG đang nói (tránh loop)
+    if (
+      !manualStop &&
+      autoMode &&
+      autoMode.checked &&
+      !speechSynthesis.speaking
+    ) {
       recognition.start();
     }
   };
 
-  // ============================================================
-  // Khi có kết quả nhận dạng giọng nói
-  // ============================================================
+  // ==========================================================================
+  // KẾT QUẢ NHẬN GIỌNG NÓI
+  // ==========================================================================
   recognition.onresult = (e) => {
-    // Lấy transcript đã nhận dạng
-    textInput.value = e.results[0][0].transcript;
+    const transcript =
+      e.results[e.results.length - 1][0].transcript;
 
-    // Reset timer vì người dùng tiếp tục nói
+    // Hiển thị text nhận được
+    textInput.value = transcript;
+
     resetSilenceTimer();
 
-    // Nếu bật Auto mode → gửi tin nhắn ngay
-    if (autoMode && autoMode.checked) {
-      if (typeof sendMessage === "function") sendMessage(true);
+    // ❗ CHỈ auto gửi khi:
+    // - Auto Mode bật
+    // - User ĐÃ đăng nhập (có token)
+    if (
+      autoMode &&
+      autoMode.checked &&
+      localStorage.getItem("token")
+    ) {
+      if (typeof sendMessage === "function") {
+        sendMessage(true);
+      }
     }
   };
 
-  // ============================================================
+  // ==========================================================================
   // TIMER IM LẶNG
-  // Nếu người dùng dừng nói trên 5 giây → tự động stop
-  // ============================================================
+  // ==========================================================================
   function resetSilenceTimer() {
     clearTimeout(silenceTimer);
 
     silenceTimer = setTimeout(() => {
-      manualStop = false; // Stop do im lặng → được phép auto khởi động lại
+      // Stop do im lặng → cho phép auto restart
+      manualStop = false;
       recognition.stop();
-    }, 5000); // Điều chỉnh timeout tại đây
+    }, 3000); // 3s im lặng
   }
 
-  // ============================================================
-  // BUTTON START / STOP MICROPHONE
-  // ============================================================
+  // ==========================================================================
+  // NÚT SPEAK (START / STOP)
+  // ==========================================================================
   speakBtn.onclick = () => {
 
-    // Nếu đang tắt → bật microphone
+    // BẬT MIC
     if (!isListening) {
-      manualStop = false; // Người dùng muốn bật → reset stop thủ công
+      manualStop = false;
       recognition.start();
     }
 
-    // Nếu đang bật → tắt microphone thủ công
+    // TẮT MIC (user chủ động)
     else {
-      manualStop = true;  // User tự stop → không auto restart
+      manualStop = true;
       clearTimeout(silenceTimer);
       recognition.stop();
     }
