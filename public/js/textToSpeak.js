@@ -49,6 +49,12 @@ function speakAI() {
 
   // Khi đọc xong, nếu Auto Mode bật → bật lại microphone
   utter.onend = () => {
-    if (autoMode.checked && recognition) recognition.start();
+    if (autoMode.checked && recognition) {
+      // ⏳ Delay để tránh mic nghe noise sau khi AI nói
+      setTimeout(() => {
+        recognition.start();
+      }, 800);
+    }
   };
+
 }

@@ -37,8 +37,6 @@ if (recognition) {
 
     manualStop = false;
 
-    // Bắt đầu đếm im lặng
-    startSilenceTimer();
   };
 
   // ============================================================
