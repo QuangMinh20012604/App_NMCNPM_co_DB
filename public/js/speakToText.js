@@ -1,64 +1,43 @@
 // ============================================================================
 // Speech-to-Text (Web Speech API)
-// Quản lý microphone: start / stop / auto mode / tránh loop STT <-> TTS
+// Fix: auto stop khi im lặng + không loop + không reset timer sai
 // ============================================================================
 
-// Khởi tạo SpeechRecognition (Chrome-based)
 let recognition =
   window.webkitSpeechRecognition ? new webkitSpeechRecognition() : null;
 
-// Trạng thái microphone
 let isListening = false;
-
-// Timer phát hiện im lặng
 let silenceTimer = null;
-
-// manualStop = true khi user hoặc hệ thống CHỦ ĐỘNG stop mic
-// Dùng để phân biệt với stop do timeout
 let manualStop = false;
 
 if (recognition) {
 
-  // ==========================================================================
-  // CẤU HÌNH SPEECH RECOGNITION
-  // ==========================================================================
   recognition.lang = "en-US";
   recognition.interimResults = true;
 
-  // ==========================================================================
-  // MIC START
-  // ==========================================================================
+  // ================= MIC START =================
   recognition.onstart = () => {
     isListening = true;
-
     speakBtn.classList.add("listening");
     setStatus("listening");
-
-    document.getElementById("micIcon").className = "bi bi-mic-fill";
+    micIcon.className = "bi bi-mic-fill";
 
     manualStop = false;
-    resetSilenceTimer();
+    startSilenceTimer();
   };
 
-  // ==========================================================================
-  // MIC STOP
-  // ==========================================================================
+  // ================= MIC END =================
   recognition.onend = () => {
     isListening = false;
 
     speakBtn.classList.remove("listening");
     setStatus("ready");
-    document.getElementById("micIcon").className = "bi bi-mic-mute-fill";
-
+    micIcon.className = "bi bi-mic-mute-fill";
     clearTimeout(silenceTimer);
 
-    // ❗ CHỈ auto restart khi:
-    // - Không phải stop thủ công
-    // - Auto Mode bật
-    // - AI KHÔNG đang nói (tránh loop)
+    // Auto restart nếu cần
     if (
       !manualStop &&
-      autoMode &&
       autoMode.checked &&
       !speechSynthesis.speaking
     ) {
@@ -66,58 +45,43 @@ if (recognition) {
     }
   };
 
-  // ==========================================================================
-  // KẾT QUẢ NHẬN GIỌNG NÓI
-  // ==========================================================================
+  // ================= RESULT =================
   recognition.onresult = (e) => {
-    const transcript =
-      e.results[e.results.length - 1][0].transcript;
+    const result = e.results[e.results.length - 1];
 
-    // Hiển thị text nhận được
+    // Chỉ xử lý khi là FINAL
+    if (!result.isFinal) return;
+
+    const transcript = result[0].transcript.trim();
+    if (!transcript) return;
+
     textInput.value = transcript;
 
-    resetSilenceTimer();
+    // Reset timer vì user vừa nói xong
+    startSilenceTimer();
 
-    // ❗ CHỈ auto gửi khi:
-    // - Auto Mode bật
-    // - User ĐÃ đăng nhập (có token)
-    if (
-      autoMode &&
-      autoMode.checked &&
-      localStorage.getItem("token")
-    ) {
-      if (typeof sendMessage === "function") {
-        sendMessage(true);
-      }
+    // Auto gửi (chỉ 1 lần)
+    if (autoMode.checked && localStorage.getItem("token")) {
+      sendMessage(true);
     }
   };
 
-  // ==========================================================================
-  // TIMER IM LẶNG
-  // ==========================================================================
-  function resetSilenceTimer() {
+  // ================= SILENCE TIMER =================
+  function startSilenceTimer() {
     clearTimeout(silenceTimer);
 
     silenceTimer = setTimeout(() => {
-      // Stop do im lặng → cho phép auto restart
-      manualStop = false;
+      manualStop = false; // do im lặng
       recognition.stop();
-    }, 3000); // 3s im lặng
+    }, 5000);
   }
 
-  // ==========================================================================
-  // NÚT SPEAK (START / STOP)
-  // ==========================================================================
+  // ================= BUTTON =================
   speakBtn.onclick = () => {
-
-    // BẬT MIC
     if (!isListening) {
       manualStop = false;
       recognition.start();
-    }
-
-    // TẮT MIC (user chủ động)
-    else {
+    } else {
       manualStop = true;
       clearTimeout(silenceTimer);
       recognition.stop();
