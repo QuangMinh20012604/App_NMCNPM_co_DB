@@ -7,7 +7,7 @@ và tra từ điển theo ngữ cảnh.
 ---
 
 ## 🌐 Demo Website
-Truy cập ứng dụng tại: [https://<[https://app-nmcnpm-dmtv.onrender.com>]()
+Truy cập ứng dụng tại: [<[https://app-nmcnpm-dmtv.onrender.com>]
 
 (Khuyến nghị sử dụng **Google Chrome** để đảm bảo hỗ trợ Web Speech API.)
 
