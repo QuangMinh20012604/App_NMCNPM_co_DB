@@ -101,7 +101,7 @@ if (recognition) {
     silenceTimer = setTimeout(() => {
       manualStop = false; // stop do im lặng
       recognition.stop();
-    }, 3000);
+    }, 5000);
   }
 
   // ============================================================
