@@ -60,7 +60,8 @@
     loginForm.onsubmit = async (e) => {
         e.preventDefault();
 
-        const email = document.getElementById("loginEmail").value.trim();
+        const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+
         const password = document.getElementById("loginPassword").value.trim();
 
         try {
@@ -108,8 +109,11 @@
         e.preventDefault();
 
         const name = document.getElementById("regName").value.trim();
-        const email = document.getElementById("regEmail").value.trim();
+
+        const email = document.getElementById("regEmail").value.trim().toLowerCase();
+
         const password = document.getElementById("regPassword").value.trim();
+
 
         try {
             const res = await fetch("/register", {
