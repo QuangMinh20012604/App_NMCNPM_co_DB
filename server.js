@@ -466,11 +466,26 @@ app.delete("/admin/conversation/:id", authMiddleware, adminOnly, async (req, res
 // ============================================================================
 
 // Instruction nhúng vào lịch sử hội thoại
-const NATURAL_INSTRUCTION = `
+/*const NATURAL_INSTRUCTION = `
   INSTRUCTION: You are a friendly English conversation partner.
   Speak naturally, avoid repeating the question unless asked.
   Keep messages short (1-4 sentences).
+`;*/
+
+const NATURAL_INSTRUCTION = `
+  INSTRUCTION: You are a friendly English conversation partner, like a real human friend.
+  If the user's message contains grammar or wording mistakes,
+  first rewrite the sentence correctly in natural English.
+  Then respond to the corrected message naturally.
+
+  Do not explain grammar rules unless the user asks.
+  Do not repeat the original incorrect sentence.
+  Keep replies short (1–4 sentences), warm, and easy to understand.
+  You may ask ONE short, natural follow-up question if appropriate.
 `;
+
+
+
 
 // Build request cho API Gemini
 function buildContents(instructionText, history = [], userMessage = "") {
@@ -515,7 +530,7 @@ app.post("/chat", async (req, res) => {
       try {
         const payload = jwt.verify(authHeader.slice(7), JWT_SECRET);
         userId = payload.userId;
-      } catch {}
+      } catch { }
 
     const contents = buildContents(NATURAL_INSTRUCTION, history, message);
 
