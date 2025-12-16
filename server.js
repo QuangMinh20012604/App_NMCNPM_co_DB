@@ -1,3 +1,4 @@
+
 // ============================================================================
 // server.js
 // Backend chính: Express + MongoDB + JWT Authentication +
@@ -119,10 +120,7 @@ function superOnly(req, res, next) {
 // Register: tạo tài khoản mới, mã hoá mật khẩu và trả token
 app.post("/register", async (req, res) => {
   try {
-    let { name, email, password } = req.body;
-
-    email = String(email).trim().toLowerCase();
-
+    const { name, email, password } = req.body;
     if (!email || !password)
       return res.status(400).json({ error: "Email and password required" });
 
@@ -164,10 +162,7 @@ app.post("/register", async (req, res) => {
 // Login: xác thực email + password, trả JWT token
 app.post("/login", async (req, res) => {
   try {
-    let { email, password } = req.body;
-
-    email = String(email).trim().toLowerCase();
-
+    const { email, password } = req.body;
     if (!email || !password)
       return res.status(400).json({ error: "Email and password required" });
 
@@ -520,7 +515,7 @@ app.post("/chat", async (req, res) => {
       try {
         const payload = jwt.verify(authHeader.slice(7), JWT_SECRET);
         userId = payload.userId;
-      } catch { }
+      } catch {}
 
     const contents = buildContents(NATURAL_INSTRUCTION, history, message);
 
