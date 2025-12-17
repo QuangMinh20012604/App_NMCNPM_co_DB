@@ -230,14 +230,9 @@ window.translateMessage = async function (msgDiv, originalText) {
     console.log("TRANSLATE RESPONSE:", data); // 👈 BẮT BUỘC
 
     // Lấy bản dịch theo mọi khả năng
-    const translated =
-      data.translation ||
-      data.translatedText ||
-      data.text ||
-      data.result ||
-      data.output ||
-      data.data?.translation ||
-      data.data?.text;
+    const translated = data.reply;
+    if (!translated) return;
+
 
     if (!translated) {
       console.warn("No translated text found");
