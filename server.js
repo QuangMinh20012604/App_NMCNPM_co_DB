@@ -24,7 +24,7 @@ app.use(cors());                             // Enable CORS
 app.use(express.static(path.join(__dirname, "public")));
 
 const PORT = process.env.PORT || 3000;
-const apiKey = process.env.GOOGLE_API_KEY || "";
+const apiKey = process.env.GOOGLE_API_KEY;
 const model = process.env.GENERATIVE_MODEL || "gemini-2.0-flash";
 const JWT_SECRET = process.env.JWT_SECRET || "keyboardcat_change_this_in_prod";
 

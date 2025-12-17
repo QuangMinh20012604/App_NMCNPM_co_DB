@@ -53,7 +53,7 @@ async function sendMessage(auto = false) {
       body: JSON.stringify({
         message: msg,
         history: conversationHistory,
-        conversationId: conversationId   // server sẽ append nếu tồn tại
+        conversationId: conversationId
       }),
     });
 
@@ -71,7 +71,6 @@ async function sendMessage(auto = false) {
     if (auto) speakAI();
 
   } catch {
-    // Lỗi kết nối server
     appendMessage("Error", "❌ Server error.");
     setStatus("error");
   }
@@ -146,31 +145,26 @@ function appendAIMessage(text) {
 
 // =======================================================
 // Reset toàn bộ cuộc hội thoại trên giao diện
-// Không xóa trên server, chỉ reset UI và biến local
 // =======================================================
 function resetConversation() {
   const msgBox = document.getElementById("messages");
   if (msgBox) msgBox.innerHTML = "";
 
-  // Xóa nội dung lịch sử (client-side)
   if (typeof conversationHistory !== "undefined") {
     conversationHistory.length = 0;
   }
 
-  // Trả trạng thái về "ready" nếu module status tồn tại
   try { setStatus("ready"); } catch (e) { }
 
   alert("Đã reset cuộc hội thoại.");
 }
 
-
 // =======================================================
 // Lưu tin nhắn vào database qua /conversation/save
-// Tự tạo conversation mới nếu chưa có ID
 // =======================================================
 async function saveToDB(userMsg, botMsg) {
   const token = localStorage.getItem("token");
-  if (!token) return; // Người dùng chưa đăng nhập → không lưu DB
+  if (!token) return;
 
   const payload = {
     messages: [
@@ -179,9 +173,6 @@ async function saveToDB(userMsg, botMsg) {
     ]
   };
 
-  // =====================================================
-  // Trường hợp chưa có conversationId → tạo mới conversation
-  // =====================================================
   if (!conversationId) {
     payload.title = "New Conversation";
 
@@ -203,9 +194,6 @@ async function saveToDB(userMsg, botMsg) {
     return;
   }
 
-  // =====================================================
-  // Nếu đã có conversationId → append message vào DB
-  // =====================================================
   payload.conversationId = conversationId;
 
   const res = await fetch("/conversation/save", {
