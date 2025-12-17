@@ -227,20 +227,25 @@ window.translateMessage = async function (msgDiv, originalText) {
     });
 
     const data = await res.json();
+    console.log("TRANSLATE RESPONSE:", data); // 👈 BẮT BUỘC
 
+    // Lấy bản dịch theo mọi khả năng
     const translated =
       data.translation ||
+      data.translatedText ||
       data.text ||
       data.result ||
-      data.output;
+      data.output ||
+      data.data?.translation ||
+      data.data?.text;
 
-    if (!translated) return;
+    if (!translated) {
+      console.warn("No translated text found");
+      return;
+    }
 
     const vnDiv = document.createElement("div");
     vnDiv.className = "ai-vn";
-    vnDiv.style.marginTop = "6px";
-    vnDiv.style.fontStyle = "italic";
-    vnDiv.style.opacity = "0.9";
     vnDiv.textContent = translated;
 
     msgDiv.appendChild(vnDiv);
@@ -249,4 +254,3 @@ window.translateMessage = async function (msgDiv, originalText) {
     console.error("Translate error:", err);
   }
 };
-
