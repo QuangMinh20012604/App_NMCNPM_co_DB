@@ -210,3 +210,35 @@ async function saveToDB(userMsg, botMsg) {
     console.log("💾 Saved message to:", conversationId);
   }
 }
+
+// =======================================================
+// translateMessage()
+// Được gọi từ chat.js khi bấm 🇻🇳 Translate
+// =======================================================
+window.translateMessage = async function (msgDiv, originalText) {
+  try {
+    // Nếu đã có bản dịch → không dịch lại
+    if (msgDiv.querySelector(".ai-vn")) return;
+
+    const res = await fetch("/translate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: originalText })
+    });
+
+    const data = await res.json();
+    if (!data || !data.translation) return;
+
+    const vnDiv = document.createElement("div");
+    vnDiv.className = "ai-vn";
+    vnDiv.style.marginTop = "6px";
+    vnDiv.style.fontStyle = "italic";
+    vnDiv.style.opacity = "0.9";
+    vnDiv.textContent = data.translation;
+
+    msgDiv.appendChild(vnDiv);
+
+  } catch (err) {
+    console.error("Translate error:", err);
+  }
+};
