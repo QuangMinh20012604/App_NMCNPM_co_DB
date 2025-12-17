@@ -211,6 +211,7 @@ async function saveToDB(userMsg, botMsg) {
   }
 }
 
+
 // =======================================================
 // translateMessage()
 // Được gọi từ chat.js khi bấm 🇻🇳 Translate
