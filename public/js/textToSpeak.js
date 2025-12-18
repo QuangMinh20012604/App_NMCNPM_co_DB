@@ -58,7 +58,7 @@ function speakAI() {
   utter.onend = () => {
     if (autoMode && autoMode.checked && recognition) {
 
-      manualStop = false;   // ⭐ QUAN TRỌNG: cho phép auto restart
+      manualStop = false;   // cho phép auto restart
 
       // Delay nhẹ tránh noise
       setTimeout(() => {
