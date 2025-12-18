@@ -186,6 +186,8 @@
                 <label>Mật khẩu:
                     <input type="password" id="regPassword"
                         pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+                        oninvalid="this.setCustomValidity('Mật khẩu phải gồm chữ hoa, chữ thường và số, tối thiểu 8 ký tự')"
+                        oninput="this.setCustomValidity('')"
                         required>
                 </label>
 
