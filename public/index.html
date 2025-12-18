@@ -56,13 +56,16 @@
                 Auto Mode
 
                 <!-- Nút đọc lại đáp án của AI -->
-                <button id="listenBtn"><i class="bi bi-megaphone" style="color: rgb(255, 0, 0);"></i> Listen Reply</button>
+                <button id="listenBtn"><i class="bi bi-megaphone" style="color: rgb(255, 0, 0);"></i> Listen
+                    Reply</button>
 
                 <!-- Lưu hội thoại -->
-                <button id="openSavePanelSidebar"><i class="bi bi-floppy" style="color: rgb(0, 17, 255);"></i> Save Conversation</button>
+                <button id="openSavePanelSidebar"><i class="bi bi-floppy" style="color: rgb(0, 17, 255);"></i> Save
+                    Conversation</button>
 
                 <!-- Reset toàn bộ cuộc hội thoại hiện tại -->
-                <button id="resetBtn"><i class="bi bi-arrow-counterclockwise" style="color: rgb(0, 163, 0);"></i> Reset</button>
+                <button id="resetBtn"><i class="bi bi-arrow-counterclockwise" style="color: rgb(0, 163, 0);"></i>
+                    Reset</button>
             </div>
 
         </div>
@@ -152,15 +155,15 @@
             <!-- Form LOGIN -->
             <form id="authLoginForm" class="auth-form">
                 <label>Email:
-                    <input type="email" id="loginEmail" placeholder="you@example.com" required>
+                    <input type="email" id="loginEmail" placeholder="you@example.com"
+                        oninvalid="this.setCustomValidity('Vui lòng nhập email hợp lệ (ví dụ: you@example.com)')"
+                        oninput="this.setCustomValidity('')" required>
                 </label>
 
                 <label>Mật khẩu:
-                    <input type="password" id="loginPassword"
-                        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+                    <input type="password" id="loginPassword" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
                         oninvalid="this.setCustomValidity('Mật khẩu phải gồm chữ hoa, chữ thường và số, tối thiểu 8 ký tự')"
-                        oninput="this.setCustomValidity('')"
-                        required>
+                        oninput="this.setCustomValidity('')" required>
                 </label>
 
                 <button type="submit" class="auth-btn login-btn">Đăng nhập</button>
@@ -174,21 +177,21 @@
             <!-- Form REGISTER -->
             <form id="authRegisterForm" class="auth-form" style="display:none;">
                 <label>Tên hiển thị:
-                    <input type="text" id="regName"
-                        pattern="^[A-Za-zÀ-ỹ\s]{2,50}$"
-                        placeholder="Nguyen Van A" required>
+                    <input type="text" id="regName" pattern="^[A-Za-zÀ-ỹ\s]{2,50}$" placeholder="Nguyen Van A"
+                        oninvalid="this.setCustomValidity('Tên hiển thị chỉ được chứa chữ cái và khoảng trắng, độ dài từ 2–50 ký tự')"
+                        oninput="this.setCustomValidity('')" required>
                 </label>
 
                 <label>Email:
                     <input type="email" id="regEmail" required>
+                    oninvalid="this.setCustomValidity('Vui lòng nhập email hợp lệ (ví dụ: you@example.com)')"
+                    oninput="this.setCustomValidity('')" required>
                 </label>
 
                 <label>Mật khẩu:
-                    <input type="password" id="regPassword"
-                        pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
+                    <input type="password" id="regPassword" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}"
                         oninvalid="this.setCustomValidity('Mật khẩu phải gồm chữ hoa, chữ thường và số, tối thiểu 8 ký tự')"
-                        oninput="this.setCustomValidity('')"
-                        required>
+                        oninput="this.setCustomValidity('')" required>
                 </label>
 
                 <button type="submit" class="auth-btn register-btn">Tạo tài khoản</button>
