@@ -25,42 +25,46 @@ function speakAI() {
   const engPart = lastAI.querySelector(".ai-english");
   if (!engPart) return;
 
-  // Lấy text tiếng Anh đã tách từ dictionary
   const text = engPart.textContent.trim();
+  if (!text) return;
 
   // Lấy cấu hình user đã lưu (voice + rate)
   const settings = JSON.parse(localStorage.getItem("aiSettings") || "{}");
 
-  // Chuẩn bị đối tượng đọc văn bản
   const utter = new SpeechSynthesisUtterance(text);
   utter.lang = "en-US";
-  utter.rate = parseFloat(settings.rate || "1.0"); // tốc độ nói
+  utter.rate = parseFloat(settings.rate || "1.0");
 
-  // Nếu user chọn voice cụ thể → áp dụng giọng đó
-  if (settings.voice !== "") {
+  if (settings.voice) {
     const voices = speechSynthesis.getVoices();
-    const chosen = voices.find((v) => v.name === settings.voice);
+    const chosen = voices.find(v => v.name === settings.voice);
     if (chosen) utter.voice = chosen;
   }
 
-  // TẮT MICRO KHI BOT BẮT ĐẦU NÓI
+  // ===============================
+  // TẮT MICRO TRƯỚC KHI AI ĐỌC
+  // ===============================
   if (recognition && isListening) {
-    manualStop = true;   // báo là stop có chủ đích
-    recognition.stop();  // tắt mic NGAY
+    manualStop = true;     // stop có chủ đích
+    recognition.stop();   // tắt mic ngay
   }
 
-  // Bắt đầu đọc
+  // AI bắt đầu đọc
   speechSynthesis.speak(utter);
 
-
-  // Khi đọc xong, nếu Auto Mode bật → bật lại microphone
+  // ===============================
+  // SAU KHI AI ĐỌC XONG → BẬT MIC
+  // ===============================
   utter.onend = () => {
-    if (autoMode.checked && recognition) {
-      //Delay để tránh mic nghe noise sau khi AI nói
+    if (autoMode && autoMode.checked && recognition) {
+
+      manualStop = false;   // ⭐ QUAN TRỌNG: cho phép auto restart
+
+      // Delay nhẹ tránh noise
       setTimeout(() => {
         recognition.start();
       }, 800);
     }
   };
-
 }
+
